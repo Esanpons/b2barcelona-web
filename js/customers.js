@@ -73,8 +73,6 @@ function openCustomersPopup() {
             await loadFromDb();
             selectedCustomerNo = null;
             renderCustomers();
-            renderImputations();
-            if (window.refreshTasksPopup) window.refreshTasksPopup();
           } catch (err) {
             console.error(err);
             alert(i18n.t('Error al eliminar el cliente'));
@@ -119,9 +117,6 @@ function openCustomerModal(customer = null, onSave) {
       await loadFromDb();
       backdrop.remove();
       if (onSave) onSave(data.no);
-      loadTasksInSelects();
-      renderImputations();
-      if (window.refreshTasksPopup) window.refreshTasksPopup();
     } catch (err) {
       console.error(err);
       alert('Error al guardar el cliente');

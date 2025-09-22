@@ -22,9 +22,6 @@
   window.round2 = round2;
   window.loadFromDb = loadFromDb;
 
-  if (typeof window.renderImputations !== 'function') window.renderImputations = () => {};
-  if (typeof window.loadTasksInSelects !== 'function') window.loadTasksInSelects = () => {};
-
   document.addEventListener('DOMContentLoaded', () => {
     loadFromDb().catch(console.error);
   });

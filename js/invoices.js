@@ -159,13 +159,9 @@ function openInvoiceModal(invoice = null, onSave) {
   const linesBody = clone.querySelector('#invoiceLinesTable tbody');
   const btnAddLine = clone.querySelector('#BtnAddLine');
   const btnDelLine = clone.querySelector('#BtnDelLine');
-  const btnImport = clone.querySelector('#BtnImportImps');
   const totalsDiv = clone.querySelector('#invoiceTotals');
-  const totalSpan = clone.querySelector('#invoiceTotal');
   const btnPrint = clone.querySelector('#BtnPrintInvoice');
-  const btnSave = form.querySelector('button[type="submit"]');
   const paidChk = form.elements['paid'];
-  const linesPerPageInput = form.elements['arrayLinesInvoicePrint'];
 
   let lines = invoice ? invoice.lines.map(l => ({ ...l })) : [];
 
@@ -228,14 +224,11 @@ function openInvoiceModal(invoice = null, onSave) {
     linesBody.querySelectorAll('input').forEach(inp => { inp.disabled = locked; });
     btnAddLine.disabled = locked;
     btnDelLine.disabled = selectedLine === null || locked;
-    btnImport.disabled = locked;
     updateTotal();
   }
 
   btnAddLine.addEventListener('click', () => { lines.push({ description: '', qty: 1 }); selectedLine = lines.length - 1; renderLines(); });
   btnDelLine.addEventListener('click', () => { if (selectedLine === null) return; lines.splice(selectedLine, 1); selectedLine = null; renderLines(); });
-  btnImport.addEventListener('click', importImps);
-
   if (invoice) {
     Object.entries(invoice).forEach(([k, v]) => {
       if (!form.elements[k]) return;
@@ -244,7 +237,6 @@ function openInvoiceModal(invoice = null, onSave) {
     });
     customerSel.value = invoice.customerNo;
     form.elements['no'].readOnly = true;
-    if (linesPerPageInput) linesPerPageInput.value = invoice.arrayLinesInvoicePrint || '';
   } else {
     form.elements['no'].value = getNextInvoiceNo();
     form.elements['date'].value = formatInputDate(new Date());
@@ -277,24 +269,6 @@ function openInvoiceModal(invoice = null, onSave) {
   }
   paidChk.addEventListener('change', updateLocked);
 
-  function importImps() {
-    if (paidChk.checked) return;
-    const dateVal = form.elements['date'].value;
-    const cust = customerSel.value;
-    if (!dateVal || !cust) return;
-    const d = new Date(dateVal);
-    const total = imputations.filter(imp => {
-      if (!imp.outDate || imp.noFee) return false;
-      const impDate = imp.date instanceof Date ? imp.date : new Date(imp.date);
-      if (impDate.getFullYear() !== d.getFullYear() || impDate.getMonth() !== d.getMonth()) return false;
-      const t = tasks.find(t => t.id === imp.taskId);
-      return t && t.customerNo === cust;
-    }).reduce((s, imp) => s + imp.totalDecimal, 0);
-    lines.push({ description: i18n.t('Horas realizadas en el período'), qty: round2(total) });
-    selectedLine = lines.length - 1;
-    renderLines();
-  }
-
   function collectData() {
     for (const ln of lines) {
       if (isNaN(ln.qty)) {
@@ -309,7 +283,6 @@ function openInvoiceModal(invoice = null, onSave) {
       vat: parseFloat(form.elements['vat'].value) || 0,
       irpf: parseFloat(form.elements['irpf'].value) || 0,
       priceHour: priceHour(),
-      arrayLinesInvoicePrint: linesPerPageInput ? linesPerPageInput.value.trim() : '',
       lines: lines.map(l => sanitizeStrings({ ...l })),
       paid: paidChk.checked
     };
@@ -330,8 +303,7 @@ function openInvoiceModal(invoice = null, onSave) {
         customerNo: data.customerNo,
         priceHour: data.priceHour,
         vat: data.vat,
-        irpf: data.irpf,
-        arrayLinesInvoicePrint: data.arrayLinesInvoicePrint
+        irpf: data.irpf
       };
 
       async function attempt(saveFn) {
