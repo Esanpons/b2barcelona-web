@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Aesva Impute Time</title>
+    <title>B2Barcelona ERP</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <link rel="stylesheet" href="css/styles.css" />
     <link rel="icon" type="image/png" href="assets/favicon.png" />
@@ -12,8 +12,8 @@
 <body>
     <header class="app-header">
         <div class="app-header__inner">
-            <div class="app-title">Aesva Impute Time <span id="envLabel" class="env-indicator"></span></div>
-            <div class="app-subtitle">Gestión de clientes y facturas</div>
+            <div class="app-title">B2Barcelona ERP <span id="envLabel" class="env-indicator"></span></div>
+            <div class="app-subtitle">Gestión de empresa, clientes y facturas</div>
         </div>
     </header>
 
@@ -23,6 +23,7 @@
                 <h3 class="menu-title">Menú</h3>
                 <ul class="menu-buttons">
                     <li><button id="btnCustomers" class="Buttons primary" type="button">Clientes</button></li>
+                    <li><button id="btnCompany" class="Buttons primary" type="button">Empresa</button></li>
                     <li><button id="btnInvoices" class="Buttons primary" type="button">Facturas</button></li>
                     <li><button id="btnConfig" class="Buttons primary" type="button">Configuración</button></li>
                 </ul>
@@ -38,7 +39,7 @@
                 <header class="section-header">
                     <h2>Panel principal</h2>
                 </header>
-                <p>Selecciona una opción del menú lateral para abrir los módulos de clientes, facturas o configuración.</p>
+                <p>Selecciona una opción del menú lateral para abrir los módulos de clientes, empresa, facturas o configuración.</p>
                 <p>Los datos se cargarán automáticamente desde Supabase al iniciar la aplicación.</p>
             </section>
         </div>
@@ -49,6 +50,8 @@
     <script src="js/conection-bbdd.js"></script>
     <script src="js/data-loader.js"></script>
     <script src="js/app-core.js"></script>
+    <script src="js/company.js"></script>
+    <script src="js/company-calculator.js"></script>
     <script src="js/invoice-print.js"></script>
     <script src="js/customers.js"></script>
     <script src="js/invoices.js"></script>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Cálculo horas</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+</head>
+
+<body>
+    <div id="companyCalcPage">
+        <header>
+            <span class="modal-title">Cálculo horas</span>
+            <button class="close" type="button">×</button>
+        </header>
+        <form id="calcForm">
+            <label>Horas mínimas
+                <input type="number" step="0.01" name="minimumHours" />
+            </label>
+            <label>Cliente
+                <select name="customerNo"></select>
+            </label>
+            <label>Precio hora
+                <input type="number" step="0.01" name="priceHour" />
+            </label>
+            <label>% IVA
+                <input type="number" step="0.01" name="vat" />
+            </label>
+            <label>% IRPF
+                <input type="number" step="0.01" name="irpf" />
+            </label>
+            <label>Importe pendiente
+                <input type="number" step="0.01" name="pending" readonly />
+            </label>
+            <label>Importe IVA
+                <input type="number" step="0.01" name="vatAmount" readonly />
+            </label>
+            <label>Importe IRPF
+                <input type="number" step="0.01" name="irpfAmount" readonly />
+            </label>
+            <label>Importe autónomos
+                <input type="number" step="0.01" name="amountAutonomos" />
+            </label>
+            <label>Delme
+                <input type="number" step="0.01" name="tithe" readonly />
+            </label>
+            <label>Nómina
+                <input type="number" step="0.01" name="amountNomina" />
+            </label>
+            <label>Importe renta
+                <input type="number" step="0.01" name="incomeAmount" />
+            </label>
+            <label>Importes extras (Open AI+Microsoft+Oficina)
+                <input type="number" step="0.01" name="extraAmounts" />
+            </label>
+            <label>Resultado
+                <input type="number" step="0.01" name="result" readonly />
+            </label>
+        </form>
+    </div>
+</body>
+
+</html>
