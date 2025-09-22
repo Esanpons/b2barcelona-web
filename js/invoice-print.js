@@ -19,17 +19,12 @@ function fmtDate(d) {
 }
 
 async function printInvoice(inv) {
+    const originalLang = i18n.lang;
+    const originalDict = i18n.dict;
+    const buyer = customers.find(c => c.no === inv.customerNo) || {};
+    const seller = company || {};
+
     try {
-        // Verificar que tenemos acceso a los datos necesarios
-        if (typeof imputations === 'undefined') {
-            console.error(i18n.t('No se encontraron imputaciones'));
-            return;
-        }
-        // --- Preparar datos y configurar idioma ---
-        const buyer = customers.find(c => c.no === inv.customerNo) || {};
-        const seller = company || {};
-        const originalLang = i18n.lang;
-        const originalDict = i18n.dict;
         const invoiceLang = buyer.customerPrintLanguaje || originalLang;
         if (invoiceLang !== originalLang) {
             try {
@@ -41,14 +36,12 @@ async function printInvoice(inv) {
             }
         }
 
-        // --- Cargar la plantilla HTML ---
         const resp = await fetch('html/invoice-print.html');
         if (!resp.ok) {
             throw new Error(i18n.t('No se pudo cargar html/invoice-print.html'));
         }
         const template = await resp.text();
 
-        // --- Construir bloques HTML ---
         const sellerHtml = `
             <p><strong> ${seller.name}</strong></p>
             <p><strong>NIF:</strong> ${seller.cif}</p>
@@ -69,161 +62,49 @@ async function printInvoice(inv) {
                 <td style="text-align: right;">${fmtCurrency(l.qty * inv.priceHour)}</td>
             </tr>
         `).join('');
+
+        const vatRate = parseFloat(inv.vat);
+        const hasVat = Number.isFinite(vatRate) && vatRate !== 0;
+        const irpfRate = parseFloat(inv.irpf);
+        const hasIrpf = Number.isFinite(irpfRate) && irpfRate !== 0;
+        const formatPercent = (rate) => fmtNum(rate, Number.isInteger(rate) ? 0 : 2);
+
         const base = inv.lines.reduce((sum, l) => sum + (l.qty * inv.priceHour), 0);
-        const ivaAmount = base * (inv.vat / 100);
-        const irpfAmount = base * (inv.irpf / 100);
+        const ivaAmount = hasVat ? base * (vatRate / 100) : 0;
+        const irpfAmount = hasIrpf ? base * (irpfRate / 100) : 0;
         const totalAmount = base + ivaAmount - irpfAmount;
 
-        const totalsHtml = `
-            <div><span class="total-label">Base</span> <span>${fmtCurrency(base)}</span></div>
-            <div><span class="total-label">+ IVA (${inv.vat}%)</span> <span>${fmtCurrency(ivaAmount)}</span></div>
-            <div><span class="total-label">- IRPF (${inv.irpf}%)</span> <span>${fmtCurrency(irpfAmount)}</span></div>
-            <div class="final-total"><span class="total-label">TOTAL</span> <span>${fmtCurrency(totalAmount)}</span></div>
-        `;
+        const totals = [
+            `<div><span class="total-label">Base</span> <span>${fmtCurrency(base)}</span></div>`
+        ];
 
-        const isRectificativa = totalAmount < 0;
-        const typeLabel = isRectificativa ? i18n.t('Factura rectificativa') : i18n.t('Factura');
-
-        // --- Lógica de imputaciones mejorada ---
-        let impsSectionHtml = '';
-        let pageTotal = 1; // al menos la página de la factura
-        if (!isRectificativa) {
-            const invoiceDate = new Date(inv.date);
-            console.log('Fecha de factura:', {
-                fecha: invoiceDate,
-                año: invoiceDate.getFullYear(),
-                mes: invoiceDate.getMonth() + 1,
-                timestamp: invoiceDate.getTime()
-            });
-
-            // Filtrar imputaciones
-            const imps = imputations.filter(imp => {
-                if (!imp || !imp.date) {
-                    console.log(i18n.t('Imputación inválida:'), imp);
-                    return false;
-                }
-
-                // Normalizar la fecha de la imputación
-                const impDate = imp.date instanceof Date ? imp.date : new Date(imp.date);
-                const task = tasks.find(t => t.id === imp.taskId);
-
-                // Obtener año y mes normalizados
-                const impYear = impDate.getFullYear();
-                const impMonth = impDate.getMonth();
-                const invYear = invoiceDate.getFullYear();
-                const invMonth = invoiceDate.getMonth();
-
-                const matchYear = impYear === invYear;
-                const matchMonth = impMonth === invMonth;
-                const matchCustomer = task && task.customerNo === inv.customerNo;
-
-                console.log(i18n.t('Evaluando imputación:'), {
-                    id: imp.id,
-                    fecha_original: imp.date,
-                    fecha_normalizada: impDate,
-                    año: impYear,
-                    mes: impMonth + 1,
-                    fecha_factura: invoiceDate,
-                    año_factura: invYear,
-                    mes_factura: invMonth + 1,
-                    coincideAño: matchYear,
-                    coincideMes: matchMonth,
-                    coincideCliente: matchCustomer,
-                    taskId: imp.taskId,
-                    task: task,
-                    customerNo: task?.customerNo,
-                    customerFactura: inv.customerNo
-                });
-
-                const matches = matchYear && matchMonth && matchCustomer;
-                console.log(`Imputación ${imp.id} ${matches ? 'COINCIDE' : 'NO COINCIDE'}`);
-
-                return matches;
-            }).sort((a, b) => {
-                const dateA = a.date instanceof Date ? a.date : new Date(a.date);
-                const dateB = b.date instanceof Date ? b.date : new Date(b.date);
-                return dateA - dateB;
-            });
-
-            console.log('Imputaciones filtradas:', {
-                total: imps.length,
-                imputaciones: imps.map(imp => ({
-                    id: imp.id,
-                    fecha: imp.date,
-                    taskId: imp.taskId,
-                    task: tasks.find(t => t.id === imp.taskId)?.subject
-                }))
-            });
-
-            if (imps.length > 0) {
-                const rowsArray = (inv.arrayLinesInvoicePrint || '').split(',')
-                    .map(n => parseInt(n.trim(), 10))
-                    .filter(n => !isNaN(n) && n > 0);
-                const ROWS_PER_PAGE_DEFAULT = 25;
-                const rowsPerPage = rowsArray.length > 0 ? rowsArray : [ROWS_PER_PAGE_DEFAULT];
-                const headerHtml = `
-                    <header class="main-header">
-                        <h1>${typeLabel}</h1>
-                        <div class="invoice-details">
-                            <div><span>FECHA:</span> <span>${fmtDate(inv.date)}</span></div>
-                            <div><span>NÚMERO:</span> <span>${inv.no}</span></div>
-                        </div>
-                    </header>`;
-
-                const makeRow = rec => {
-                    const task = tasks.find(t => t.id === rec.taskId) || {};
-                    const sinCargo = (rec.noFee || task.noCharge) ? i18n.t('Sí') : '';
-                    const taskLabel = task.clientTaskNo || task.subject || '';
-                    return `<tr>
-                        <td>${fmtDate(rec.date)}</td>
-                        <td>${taskLabel}</td>
-                        <td>${rec.comments || ''}</td>
-                        <td style="text-align: right;">${fmtNum(rec.totalDecimal)}</td>
-                        <td style="text-align: center;">${sinCargo}</td>
-                    </tr>`;
-                };
-
-                const pageData = [];
-                let idx = 0;
-                let page = 0;
-                while (idx < imps.length) {
-                    const rowsThisPage = rowsPerPage[Math.min(page, rowsPerPage.length - 1)];
-                    const pageRows = imps.slice(idx, idx + rowsThisPage).map(makeRow).join('');
-                    pageData.push({
-                        num: page + 1,
-                        html: `
-                            <div class="page-break"></div>
-                            <div class="imputations-page">
-                                ${headerHtml}
-                                <table class="imps-table">
-                                    <thead>
-                                        <tr>
-                                            <th class="date-col">FECHA</th>
-                                            <th class="task-col">TAREA</th>
-                                            <th class="desc-col">DESCRIPCIÓN</th>
-                                            <th class="qty-col">CANTIDAD</th>
-                                            <th class="nocharge-col">SIN CARGO</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>${pageRows}</tbody>
-                                </table>
-                                <div class="imps-footer">Página {{PAGE_NUM}} de {{PAGE_TOTAL}}</div>
-                            </div>`
-                    });
-                    idx += rowsThisPage;
-                    page++;
-                }
-
-                pageTotal = pageData.length + 1; // +1 por la primera página de la factura
-                impsSectionHtml = pageData
-                    .map(p => p.html
-                        .replace('{{PAGE_NUM}}', p.num + 1)
-                        .replace('{{PAGE_TOTAL}}', pageTotal))
-                    .join('');
-            }
+        if (hasVat) {
+            totals.push(`<div><span class="total-label">+ IVA (${formatPercent(vatRate)}%)</span> <span>${fmtCurrency(ivaAmount)}</span></div>`);
         }
 
-        // --- Ensamblar el HTML final ---
+        if (hasIrpf) {
+            totals.push(`<div><span class="total-label">- IRPF (${formatPercent(irpfRate)}%)</span> <span>${fmtCurrency(irpfAmount)}</span></div>`);
+        }
+
+        totals.push(`<div class="final-total"><span class="total-label">TOTAL</span> <span>${fmtCurrency(totalAmount)}</span></div>`);
+
+        const totalsHtml = totals.join('');
+
+        const typeLabel = totalAmount < 0 ? i18n.t('Factura rectificativa') : i18n.t('Factura');
+
+        const paymentLines = [];
+        if (seller.bankName && seller.bankName.trim()) {
+            paymentLines.push(seller.bankName.trim());
+        }
+        if (seller.iban && seller.iban.trim()) {
+            paymentLines.push(
+                i18n.t('Transferencia a la cuenta {{IBAN}}').replace('{{IBAN}}', seller.iban.trim())
+            );
+        }
+        const paymentHtml = paymentLines.length
+            ? `<footer class="payment-info"><h2>${i18n.t('Forma de pago')}</h2>${paymentLines.map(line => `<p>${line}</p>`).join('')}</footer>`
+            : '';
+
         const finalHtml = template
             .replace(/{{TYPE}}/g, typeLabel)
             .replace(/{{NO}}/g, inv.no)
@@ -232,12 +113,10 @@ async function printInvoice(inv) {
             .replace('{{BUYER}}', buyerHtml)
             .replace('{{LINES}}', linesHtml)
             .replace('{{TOTALS}}', totalsHtml)
-            .replace('{{IBAN}}', seller.iban)
+            .replace('{{PAYMENT_SECTION}}', paymentHtml)
             .replace('{{PAGE_NUM}}', 1)
-            .replace('{{PAGE_TOTAL}}', pageTotal)
-            .replace('{{IMPS_SECTION}}', impsSectionHtml);
+            .replace('{{PAGE_TOTAL}}', 1);
 
-        // --- Lógica de impresión con iframe ---
         let iframe = document.getElementById('printing-frame');
         if (!iframe) {
             iframe = document.createElement('iframe');
@@ -270,5 +149,7 @@ async function printInvoice(inv) {
 
     } catch (error) {
         console.error('Error al generar la factura:', error);
+        i18n.lang = originalLang;
+        i18n.dict = originalDict;
     }
 }

@@ -3,171 +3,59 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Aesva Impute Time</title>
+    <title>Aesva ERP</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <link rel="stylesheet" href="css/styles.css" />
-    <link rel="stylesheet" href="css/calendar-year.css" />
     <link rel="icon" type="image/png" href="assets/favicon.png" />
 </head>
 
 <body>
-    <!-- Encabezado de la aplicación -->
     <header class="app-header">
         <div class="app-header__inner">
-            <div class="app-title">Aesva Impute Time <span id="envLabel" class="env-indicator"></span></div>
-            <div class="app-subtitle">Gestión e imputación de horas</div>
+            <div class="app-title">
+                <span id="appTitleText">Aesva ERP</span>
+                <span id="envLabel" class="env-indicator"></span>
+            </div>
+            <div class="app-subtitle">Gestión de empresa, clientes y facturas</div>
         </div>
     </header>
 
     <main>
-        <!-- Panel lateral (menú + filtros) -->
         <aside id="filterPane">
             <nav class="menu-block">
                 <h3 class="menu-title">Menú</h3>
                 <ul class="menu-buttons">
                     <li><button id="btnCustomers" class="Buttons primary" type="button">Clientes</button></li>
-                    <li><button id="btnTasks" class="Buttons primary" type="button">Tareas</button></li>
-                    <li><button id="btnCalendar" class="Buttons primary" type="button">Calendario</button></li>
                     <li><button id="btnCompany" class="Buttons primary" type="button">Empresa</button></li>
                     <li><button id="btnInvoices" class="Buttons primary" type="button">Facturas</button></li>
                     <li><button id="btnConfig" class="Buttons primary" type="button">Configuración</button></li>
                 </ul>
             </nav>
-
             <div class="filters-block">
-                <h3 class="menu-title">Vistas</h3>
-                <ul class="filter-list">
-                    <li data-filter="all" class="active">Todo</li>
-                    <li data-filter="today">Hoy</li>
-                    <li data-filter="week">Esta semana</li>
-                    <li data-filter="month">Mes</li>
-                    <li data-filter="prevMonth">Mes anterior</li>
-                </ul>
-                <input type="text" id="searchFilter" placeholder="Filtrar lista por..." />
+                <h3 class="menu-title">Información</h3>
+                <p>Utiliza los botones del menú para gestionar los datos disponibles.</p>
             </div>
         </aside>
 
         <div class="content">
-            <!-- Control de fichaje -->
-            <section id="fichaje" class="card">
-                <div id="DivPadre">
-                    <div id="DivContainer">
-                        <div id="DivContainerTiempoTrabajado">
-                            <div class="TiempoTrabajado" id="TitleTiempoTotalTrabajado">Tiempo total (hoy)</div>
-                            <div class="TiempoTrabajado" id="TiempoTotalTrabajado">00:00:00</div>
-                        </div>
-
-                        <!-- Selector de tarea actual estilizado -->
-                        <div class="current-task-block">
-                            <label for="currentTaskSelect" class="field-label">Tarea actual</label>
-                            <input id="currentTaskSelect" class="field-control" list="taskOptions" />
-                            <datalist id="taskOptions"></datalist>
-                        </div>
-
-                        <div id="DivContainerButtons">
-                            <button class="Buttons" id="BtnEntrar" type="button">Entrar</button>
-                            <button class="Buttons" id="BtnSalir" type="button" disabled>Salir</button>
-                        </div>
-                        <div id="DivUltimaAccion">
-                            <div class="TextUltima" id="UltimaAccionEntrada"></div>
-                            <div class="TextUltima" id="UltimaAccionSalida"></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Tabla de imputaciones -->
-            <section id="tableWrapper" class="card">
+            <section class="card">
                 <header class="section-header">
-                    <h2>Imputaciones</h2>
-                    <div class="header-buttons">
-                        <button class="Buttons" id="BtnAddImputation" type="button">+ Añadir imputación</button>
-                        <button class="Buttons primary" id="BtnEditImputation" type="button" disabled>Editar</button>
-                        <button class="Buttons" id="BtnDelImputation" type="button" disabled>Eliminar</button>
-                        <button class="Buttons" id="BtnLoadAllImp" type="button">Cargar todo</button>
-                        <button class="Buttons" id="BtnExportImp" type="button">Exportar CSV</button>
-                    </div>
+                    <h2>Panel principal</h2>
                 </header>
-                <div class="table-responsive">
-                    <table id="imputationsTable">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Entrada</th>
-                                <th>Salida</th>
-                                <th>Total</th>
-                                <th>Decimal</th>
-                                <th>Minutos</th>
-                                <th>Tarea</th>
-                                <th>Nº tarea cliente</th>
-                                <th>No Fee</th>
-                                <th>Festivo</th>
-                                <th>Vacaciones</th>
-                                <th>Comentarios</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-                <div id="totalsBar">
-                    <div><span>Tiempo trabajado:</span><strong id="totWorked">00:00:00</strong></div>
-                    <div><span>Tiempo Decimal:</span><strong id="totDecimal">0</strong></div>
-                    <div><span>Tiempo en minutos:</span><strong id="totMinutes">0</strong></div>
-                    <div><span>Total horas laborales:</span><strong id="totLabor">0</strong></div>
-                    <div><span>Horas previstas:</span><strong id="totExpected">0</strong></div>
-                </div>
+                <p>Selecciona una opción del menú lateral para abrir los módulos de clientes, empresa, facturas o configuración.</p>
+                <p>Los datos se cargarán automáticamente desde Supabase al iniciar la aplicación.</p>
             </section>
         </div>
     </main>
 
-    <!-- Template modal de Imputaciones -->
-    <template id="imputationModalTmpl">
-        <div class="modal-backdrop">
-            <div class="modal">
-                <header>
-                    <span class="modal-title">Nueva imputación</span>
-                    <button class="close" type="button">×</button>
-                </header>
-                <form id="imputationForm">
-                    <input type="hidden" name="id" />
-                    <label>Fecha
-                        <input type="date" name="date" required />
-                    </label>
-                    <label>Hora entrada
-                        <input type="time" name="inTime" step="900" required />
-                    </label>
-                    <label>Hora salida
-                        <input type="time" name="outTime" step="900" />
-                    </label>
-                    <label>Tarea
-                        <input name="taskId" list="taskOptions" />
-                    </label>
-                    <label class="check"><input type="checkbox" name="noFee" /> No Fee</label>
-                    <label class="full">Comentarios
-                        <input type="text" name="comments" />
-                    </label>
-                    <footer class="full">
-                        <button type="submit" class="Buttons primary">Guardar</button>
-                    </footer>
-                </form>
-            </div>
-        </div>
-    </template>
-
-    <!-- Scripts -->
-    <script src="js/conection-bbdd.js"></script>
     <script src="js/i18n.js"></script>
     <script src="js/config.js"></script>
-    <script src="js/google-ai.js"></script>
+    <script src="js/conection-bbdd.js"></script>
     <script src="js/data-loader.js"></script>
-    <script src="js/impute-hours.js"></script>
-    <script src="js/customers.js"></script>
-    <script src="js/tasks.js"></script>
-    <script src="js/calendar.js"></script>
-    <script src="js/calendar-year.js"></script>
+    <script src="js/app-core.js"></script>
     <script src="js/company.js"></script>
-    <script src="js/company-calculator.js"></script>
     <script src="js/invoice-print.js"></script>
+    <script src="js/customers.js"></script>
     <script src="js/invoices.js"></script>
 </body>
 
