@@ -1,7 +1,8 @@
 /*************** Facturas (popup externo) ****************/
 let currentInvoicesBackdrop = null;
 
-document.getElementById("btnInvoices").addEventListener("click", openInvoicesPopup);
+const invoicesButton = document.getElementById("btnInvoices");
+if (invoicesButton) invoicesButton.addEventListener("click", openInvoicesPopup);
 
 function invoiceTotal(inv) {
   const base = inv.lines.reduce((s, l) => s + l.qty * inv.priceHour, 0);

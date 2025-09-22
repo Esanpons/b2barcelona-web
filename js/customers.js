@@ -1,7 +1,8 @@
 /*************** Clientes (popup externo) ****************/
 let currentCustomersBackdrop = null;
 
-document.getElementById("btnCustomers").addEventListener("click", openCustomersPopup);
+const customersButton = document.getElementById("btnCustomers");
+if (customersButton) customersButton.addEventListener("click", openCustomersPopup);
 
 function openCustomersPopup() {
   if (currentCustomersBackdrop) { currentCustomersBackdrop.remove(); currentCustomersBackdrop = null; }
