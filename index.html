@@ -10,6 +10,40 @@
 </head>
 
 <body>
+    <header class="app-header">
+        <div class="app-header__inner">
+            <div class="app-title">Aesva Impute Time <span id="envLabel" class="env-indicator"></span></div>
+            <div class="app-subtitle">Gestión de clientes y facturas</div>
+        </div>
+    </header>
+
+    <main>
+        <aside id="filterPane">
+            <nav class="menu-block">
+                <h3 class="menu-title">Menú</h3>
+                <ul class="menu-buttons">
+                    <li><button id="btnCustomers" class="Buttons primary" type="button">Clientes</button></li>
+                    <li><button id="btnInvoices" class="Buttons primary" type="button">Facturas</button></li>
+                    <li><button id="btnConfig" class="Buttons primary" type="button">Configuración</button></li>
+                </ul>
+            </nav>
+            <div class="filters-block">
+                <h3 class="menu-title">Información</h3>
+                <p>Utiliza los botones del menú para gestionar los datos disponibles.</p>
+            </div>
+        </aside>
+
+        <div class="content">
+            <section class="card">
+                <header class="section-header">
+                    <h2>Panel principal</h2>
+                </header>
+                <p>Selecciona una opción del menú lateral para abrir los módulos de clientes, facturas o configuración.</p>
+                <p>Los datos se cargarán automáticamente desde Supabase al iniciar la aplicación.</p>
+            </section>
+        </div>
+    </main>
+
     <script src="js/i18n.js"></script>
     <script src="js/config.js"></script>
     <script src="js/conection-bbdd.js"></script>
