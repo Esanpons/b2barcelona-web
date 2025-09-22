@@ -156,6 +156,7 @@ function openInvoiceModal(invoice = null, onSave) {
   const form = clone.querySelector('#invoiceForm');
   const customerSel = form.elements['customerNo'];
   customerSel.innerHTML = '<option value=""></option>' + customers.map(c => `<option value="${c.no}">${c.no} - ${c.name}</option>`).join('');
+  const priceInput = form.elements['priceHour'];
   const linesBody = clone.querySelector('#invoiceLinesTable tbody');
   const btnAddLine = clone.querySelector('#BtnAddLine');
   const btnDelLine = clone.querySelector('#BtnDelLine');
@@ -166,10 +167,10 @@ function openInvoiceModal(invoice = null, onSave) {
   let lines = invoice ? invoice.lines.map(l => ({ ...l })) : [];
 
   let selectedLine = null;
+  const originalCustomerNo = invoice ? invoice.customerNo : null;
 
   function priceHour() {
-    const cust = customers.find(c => c.no === customerSel.value);
-    return cust ? cust.priceHour || 0 : 0;
+    return parseFloat(priceInput.value) || 0;
   }
 
   function updateTotal() {
@@ -245,14 +246,19 @@ function openInvoiceModal(invoice = null, onSave) {
   function syncCustomer() {
     const cust = customers.find(c => c.no === customerSel.value);
     if (cust) {
+      if (!invoice || customerSel.value !== originalCustomerNo || priceInput.value === '') {
+        priceInput.value = cust.priceHour ?? '';
+      }
       form.elements['vat'].value = cust.vat;
       form.elements['irpf'].value = cust.irpf;
     }
     renderLines();
-    updateTotal();
   }
 
   customerSel.addEventListener('change', syncCustomer);
+  priceInput.addEventListener('input', () => {
+    renderLines();
+  });
 
   syncCustomer();
   updateLocked();
