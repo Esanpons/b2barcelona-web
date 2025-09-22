@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Configuración</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+</head>
+
+<body>
+    <div id="configPage">
+        <header>
+            <span class="modal-title">Configuración Supabase</span>
+            <button class="close" type="button">&times;</button>
+        </header>
+        <form id="configForm">
+            <label>Entorno
+                <select name="environment">
+                    <option value="real">Real</option>
+                    <option value="test">Test</option>
+                </select>
+            </label>
+            <div id="realFields" class="env-block">
+                <label>URL Supabase Real
+                    <input type="text" name="supabaseUrlReal" />
+                </label>
+                <label class="full">KEY Supabase Real
+                    <input type="text" name="supabaseKeyReal" />
+                </label>
+            </div>
+            <div id="testFields" class="env-block">
+                <label>URL Supabase Test
+                    <input type="text" name="supabaseUrlTest" />
+                </label>
+                <label class="full">KEY Supabase Test
+                    <input type="text" name="supabaseKeyTest" />
+                </label>
+            </div>
+            <div id="aiFields" class="env-block">
+                <h3>Google AI Studio</h3>
+                <label class="full">API Key
+                    <input type="text" name="aiKey" />
+                </label>
+                <label>Modelo
+                    <input type="text" name="aiModel" />
+                </label>
+                <label>Idioma correcci&oacute;n
+                    <select name="aiLang">
+                        <option value="es">Castellano</option>
+                        <option value="ca">Catal&aacute;n</option>
+                    </select>
+                </label>
+            </div>
+            <label>Idioma interfaz
+                <select name="uiLang">
+                    <option value="es">Castellano</option>
+                    <option value="ca">Catal&aacute;n</option>
+                </select>
+            </label>
+            <footer class="full">
+                <button type="submit" class="Buttons primary">Guardar</button>
+            </footer>
+        </form>
+    </div>
+</body>
+
+</html>

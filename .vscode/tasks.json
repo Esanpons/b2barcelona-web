@@ -1,0 +1,35 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Traer cambios y borrar ramas locales eliminadas del remoto",
+      "type": "shell",
+      "command": "git fetch --prune; git for-each-ref '--format=%(refname:short) %(upstream:track)' refs/heads | Where-Object { $_ -match '\\[gone\\]' } | ForEach-Object { $b = ($_ -split ' ')[0]; if ($b -and $b -ne (git rev-parse --abbrev-ref HEAD)) { git branch -d $b } }",
+      "detail": "Ejecuta la tarea para hacer fetch y eliminar ramas locales eliminadas del remoto: Ctrl + Shift + P o F1 → Run Task → Fetch and Prune Local Git Branches",
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      }
+    },
+    {
+      "label": "Comprobar ramas remotas",
+      "type": "shell",
+      "command": "git fetch",
+      "detail": "Trae y cambia a la rama remota 'nombre-de-tu-rama' si no existe localmente. Úsalo cuando no veas la rama en VSCode.",
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    }
+  ]
+}

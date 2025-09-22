@@ -1,0 +1,233 @@
+/* --- Estilos base (sin apenas cambios) --- */
+body {
+    /* Usamos la misma tipografía que el layout de Business Central */
+    font-family: 'Comic Sans MS', Arial, Helvetica, sans-serif;
+    font-size: 11pt;
+    color: #000;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --accent-color: #00acb8;
+    --header-blue: #00acb8;
+}
+
+.invoice-container,
+.imputations-page {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    margin: 0 auto;
+    box-sizing: border-box;
+    /* evita que el padding aumente el ancho */
+    padding: 40px;
+    padding-top: calc(50px);
+    padding-bottom: 80px;
+    /* hueco para el pie de página */
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 40px;
+}
+
+.main-header h1 {
+    /* Estilo similar al título del informe de BC */
+    font-size: 24pt;
+    color: var(--header-blue);
+    margin: 0;
+    font-weight: bold;
+}
+
+.invoice-details {
+    text-align: right;
+}
+
+.invoice-details div {
+    margin-bottom: 5px;
+}
+
+.invoice-details span {
+    display: inline-block;
+    font-weight: bold;
+    min-width: 80px;
+}
+
+.parties {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+.party-details {
+    width: 48%;
+}
+
+.party-details h3 {
+    font-size: 12px;
+    margin: 0 0 10px 0;
+}
+
+.party-details p {
+    margin: 2px 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+thead th {
+    background-color: var(--accent-color) !important;
+    /* !important para asegurar la sobreescritura */
+    color: white !important;
+    font-weight: bold;
+    font-size: 11pt;
+    padding: 8px;
+    text-align: center;
+    border: 1px solid var(--accent-color);
+    /* Clave para forzar la impresión de colores de fondo */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+tbody td {
+    padding: 8px;
+    /* Las líneas no deben mostrar borde visible */
+    border-bottom: 1px solid transparent;
+    font-size: 8pt;
+}
+
+.lines-table td {
+    font-size: 10pt;
+    /* un poco más grande que el valor base */
+}
+
+.imps-table td {
+    padding: 4px 12px 4px 8px;
+    /* filas más compactas y algo de espacio a la derecha */
+}
+
+.page-footer,
+.imps-footer {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 8pt;
+    margin-top: 0;
+}
+
+.lines-table .desc {
+    text-align: left;
+}
+
+.lines-table .qty {
+    text-align: right;
+    width: 15%;
+}
+
+.lines-table .price {
+    text-align: right;
+    width: 15%;
+}
+
+.lines-table .total {
+    text-align: right;
+    width: 20%;
+}
+
+.totals-section {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    /* Separador del mismo color que en el informe de BC */
+    border-top: 2px solid var(--accent-color);
+    padding-top: 10px;
+}
+
+.totals-box div {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    text-align: right;
+    padding: 3px 0;
+}
+
+.totals-box .total-label {
+    font-weight: bold;
+    text-align: left;
+    font-size: 8pt;
+}
+
+.totals-box .final-total {
+    font-weight: bold;
+    font-size: 12pt;
+}
+
+.payment-info {
+    margin-top: 50px;
+}
+
+.payment-info h2 {
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.payment-info p {
+    margin: 0;
+}
+
+.imputations-page .main-header {
+    margin-bottom: 20px;
+}
+
+.imps-table .date-col {
+    width: 15%;
+}
+
+.imps-table .task-col {
+    width: 15%;
+}
+
+.imps-table .qty-col {
+    width: 15%;
+    text-align: right;
+}
+
+.imps-table .nocharge-col {
+    width: 10%;
+    text-align: center;
+}
+
+/* --- REGLAS DE IMPRESIÓN ESPECÍFICAS Y CRUCIALES --- */
+@media print {
+
+    /* Reseteamos el body para la impresión */
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Le decimos al navegador que use la hoja de impresión para una página A4 y sin márgenes */
+    @page {
+        size: A4;
+        margin: 0;
+    }
+
+    /* Cabeceras de tablas repetidas en cada página */
+    thead {
+        display: table-header-group;
+    }
+
+    /* Forzamos el salto de página donde lo necesitamos */
+    .page-break {
+        page-break-before: always;
+    }
+}

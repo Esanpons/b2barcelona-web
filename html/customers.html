@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Clientes</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+</head>
+
+<body>
+    <div id="customersPage">
+        <header>
+            <span class="modal-title">Clientes</span>
+            <button class="close" type="button">×</button>
+        </header>
+        <div class="section-header">
+            <h2>Listado de clientes</h2>
+            <div>
+                <button class="Buttons" id="BtnAddCustomer" type="button">+ Nuevo cliente</button>
+                <button class="Buttons primary" id="BtnEditCustomer" type="button" disabled>Editar</button>
+                <button class="Buttons" id="BtnDelCustomer" type="button" disabled>Eliminar</button>
+            </div>
+        </div>
+        <table id="customersTable">
+            <thead>
+                <tr>
+                    <th>Nº</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <!-- Template modal edición/creación cliente -->
+        <template id="customerModalTmpl">
+            <div class="modal-backdrop">
+                <div class="modal">
+                    <header>
+                        <span class="modal-title">Cliente</span>
+                        <button class="close" type="button">×</button>
+                    </header>
+                    <form id="customerForm">
+                        <label>Nº
+                            <input type="text" name="no" required />
+                        </label>
+                        <label>Nombre
+                            <input type="text" name="name" required />
+                        </label>
+                        <label class="full">Dirección
+                            <input type="text" name="address" />
+                        </label>
+                        <label>Teléfono
+                            <input type="text" name="phone" />
+                        </label>
+                        <label>Email
+                            <input type="email" name="email" />
+                        </label>
+                        <label>Idioma factura
+                            <select name="customerPrintLanguaje">
+                                <option value="es">Castellano</option>
+                                <option value="ca">Catalán</option>
+                            </select>
+                        </label>
+                        <label>Nombre contacto
+                            <input type="text" name="contactName" />
+                        </label>
+                        <label>CIF/NIF
+                            <input type="text" name="cif" />
+                        </label>
+                        <label>Precio hora
+                            <input type="number" step="0.01" name="priceHour" />
+                        </label>
+                        <label>% IVA
+                            <input type="number" step="0.01" name="vat" />
+                        </label>
+                        <label>% IRPF
+                            <input type="number" step="0.01" name="irpf" />
+                        </label>
+                        <label>Mín. mes
+                            <input type="number" step="0.01" name="minimumMonthlyHours" />
+                        </label>
+                        <label>Mín. día
+                            <input type="number" step="0.01" name="minimumDailyHours" />
+                        </label>
+                        <footer class="full">
+                            <button type="submit" class="Buttons primary">Guardar</button>
+                        </footer>
+                    </form>
+                </div>
+            </div>
+        </template>
+    </div>
+</body>
+
+</html>

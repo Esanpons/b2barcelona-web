@@ -1,0 +1,698 @@
+/* ===================== THEME ===================== */
+:root {
+  --primary: #176B87;
+  --primary-hover: #1f8aa9;
+  --accent: #57cc99;
+  --accent-hover: #3fb784;
+  --danger: #e58a9c;
+  --danger-hover: #d66d82;
+  --bg: #f4f6f8;
+  --text: #2a2f33;
+  --card-bg: #ffffff;
+  --border: #e3e8ec;
+  --radius: 12px;
+  --transition: .25s ease;
+  --shadow: 0 4px 12px rgba(22, 34, 51, .08);
+  --header-height: 70px;
+  font-size: 16px;
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ===================== HEADER ===================== */
+.app-header {
+  background: linear-gradient(90deg, var(--primary) 0%, #2492b2 60%, #27a4c7 100%);
+  color: #fff;
+  padding: .75rem 1.5rem;
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+.app-header__inner {
+  max-width: 1500px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-title {
+  font-size: 1.55rem;
+  font-weight: 600;
+  letter-spacing: .5px;
+}
+
+.app-subtitle {
+  font-size: .8rem;
+  opacity: .85;
+  margin-top: -2px;
+}
+
+.env-indicator {
+  margin-left: 1rem;
+  display: none;
+}
+
+.env-indicator.test {
+  display: inline;
+  color: red;
+  font-weight: 700;
+  font-size: 2rem;
+}
+
+/* ===================== LAYOUT ===================== */
+main {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 1rem 1rem 2rem;
+  display: flex;
+  gap: 1.25rem;
+  position: relative;
+  align-items: flex-start;
+}
+
+#filterPane {
+  width: 240px;
+  flex: 0 0 240px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: calc(var(--header-height) + .5rem);
+  height: fit-content;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.menu-title {
+  margin: .25rem 0 .25rem;
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.menu-buttons {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.menu-buttons li {
+  margin: 0;
+}
+
+.filter-list {
+  list-style: none;
+  padding: 0;
+  margin: .25rem 0 .5rem;
+}
+
+.filter-list li {
+  padding: .3rem 0;
+  cursor: pointer;
+  color: var(--primary);
+  font-size: .85rem;
+}
+
+.filter-list li.active {
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+#filterPane input {
+  width: 100%;
+  padding: .45rem .55rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: .8rem;
+  background: #f9fafb;
+  box-sizing: border-box;
+}
+
+/* ===================== GENERIC ===================== */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem 1.25rem;
+  box-shadow: var(--shadow);
+}
+
+/* ===================== FICHAJE ===================== */
+#DivContainer {
+  text-align: center;
+}
+
+.TiempoTrabajado {
+  color: var(--primary);
+  font-size: 30pt;
+  font-family: 'Segoe UI';
+}
+
+#TitleTiempoTotalTrabajado:hover {
+  text-decoration: none;
+  cursor: default;
+}
+
+.TextUltima {
+  font-size: 14px;
+  display: none;
+  margin-top: .5rem;
+  font-weight: 500;
+}
+
+#UltimaAccionSalida {
+  color: #d90429;
+}
+
+#UltimaAccionEntrada {
+  color: var(--accent);
+}
+
+/* Nuevo bloque selector tarea */
+.current-task-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1rem 0 1.25rem;
+}
+
+.current-task-block .field-label {
+  font-size: .65rem;
+  color: #555;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: .25rem;
+}
+
+.current-task-block .field-control {
+  padding: .45rem .55rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: .8rem;
+  background: #f9fafb;
+  min-width: 220px;
+}
+
+.current-task-block .field-control:focus {
+  outline: 2px solid var(--primary);
+  background: #fff;
+}
+
+/* ===================== BUTTONS ===================== */
+.Buttons {
+  min-width: 130px;
+  height: 40px;
+  color: #fff;
+  padding: 5px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  border-radius: 40px;
+  font-family: 'Segoe UI', sans-serif;
+  border: 2px solid;
+  background: var(--accent);
+  border-color: var(--accent);
+  font-size: .8rem;
+  text-decoration: none;
+}
+
+.Buttons:hover:not(:disabled) {
+  background: #fff;
+  color: var(--accent);
+}
+
+#BtnEntrar {
+  background: #32cd32;
+  border-color: #32cd32;
+}
+
+#BtnEntrar:hover:not(:disabled) {
+  background: #fff;
+  color: #32cd32;
+}
+
+#BtnSalir {
+  background: #9E0000;
+  border-color: #9E0000;
+}
+
+#BtnSalir:hover:not(:disabled) {
+  background: #fff;
+  color: #9E0000;
+}
+
+#BtnLoadAllImp {
+  background: #9E6900;
+  border-color: #9E6900;
+}
+
+#BtnLoadAllImp:hover:not(:disabled) {
+  background: #fff;
+  color: #9E6900;
+}
+
+#BtnPrintInv,
+#BtnPrintInvoice {
+  background: #009688;
+  border-color: #009688;
+}
+
+#BtnPrintInv:hover:not(:disabled),
+#BtnPrintInvoice:hover:not(:disabled) {
+  background: #fff;
+  color: #009688;
+}
+
+/* Botón para abrir la vista anual del calendario */
+#BtnYearView {
+  background: #137CBD;
+  border-color: #137CBD;
+}
+
+#BtnYearView:hover:not(:disabled) {
+  background: #fff;
+  color: #137CBD;
+}
+
+button[id^="BtnDel"] {
+  background: #d90429;
+  border-color: #d90429;
+}
+
+button[id^="BtnDel"]:hover:not(:disabled) {
+  background: #fff;
+  color: #d90429;
+}
+
+button[id^="BtnEdit"] {
+  background: #ff8c00;
+  border-color: #ff8c00;
+}
+
+button[id^="BtnEdit"]:hover:not(:disabled) {
+  background: #fff;
+  color: #ff8c00;
+}
+
+.Buttons.primary {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.Buttons.primary:hover {
+  background: #fff;
+  color: var(--primary);
+}
+
+.Buttons:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ===================== TABLES ===================== */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: .5rem;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: .75rem;
+}
+
+thead {
+  background: var(--primary);
+  color: #fff;
+}
+
+th,
+td {
+  padding: .55rem .6rem;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+  vertical-align: middle;
+}
+
+tbody tr:hover {
+  background: #eef7fb;
+}
+
+tbody tr {
+  cursor: pointer;
+  transition: background .15s;
+}
+
+tbody tr.selected {
+  background: #cfe8ff !important;
+}
+
+#tasksTable th.select-col,
+#tasksTable td.select-cell {
+  width: 48px;
+  text-align: center;
+}
+
+#tasksTable td.select-cell input {
+  cursor: pointer;
+}
+
+#tasksTable tbody tr.bulk-selected:not(.selected) {
+  background: #fff1d6;
+}
+
+#tasksTable tbody tr.selected.bulk-selected {
+  box-shadow: inset 0 0 0 2px #ffb347;
+}
+
+#invoiceTotals {
+  font-size: .9rem;
+  font-weight: 600;
+  margin-bottom: .5rem;
+}
+
+#invoiceTotals div {
+  display: flex;
+  justify-content: flex-end;
+  gap: .25rem;
+}
+
+#invoiceTotals .final {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+#tasksTable td,
+#tasksTable th,
+#customersTable td,
+#customersTable th {
+  white-space: nowrap;
+}
+
+#totalsBar {
+  display: flex;
+  gap: 2rem;
+  margin-top: .75rem;
+  padding: .75rem .25rem 0;
+  border-top: 2px solid var(--border);
+  font-size: .7rem;
+  flex-wrap: wrap;
+}
+
+#totalsBar div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 120px;
+}
+
+#totalsBar span {
+  color: #555;
+  margin-bottom: .2rem;
+  font-weight: 500;
+}
+
+#totalsBar strong {
+  font-size: .95rem;
+  color: var(--primary);
+}
+
+/* ===================== MODALS ===================== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(25, 40, 54, .55);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem 1rem;
+  z-index: 2000;
+  overflow-y: auto;
+}
+
+.modal {
+  background: var(--card-bg);
+  max-width: 900px;
+  width: 95%;
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem 1.5rem;
+  box-shadow: var(--shadow);
+  position: relative;
+  animation: pop .25s ease;
+}
+
+.modal.narrow {
+  max-width: 600px;
+  width: 50%;
+}
+
+@keyframes pop {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal header {
+  font-size: 1.15rem;
+  margin-bottom: .75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+}
+
+.modal header button.close {
+  border: none;
+  background: transparent;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #555;
+}
+
+.modal header button.close:hover {
+  color: #000;
+}
+
+.modal form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.modal label {
+  font-size: .65rem;
+  color: #555;
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+.modal input,
+.modal select {
+  width: 100%;
+  padding: .45rem .55rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: .8rem;
+  background: #f9fafb;
+}
+
+.task-duplicate-banner {
+  grid-column: 1 / 3;
+  background: #ffe3e3;
+  color: #b00020;
+  font-weight: 700;
+  text-align: center;
+  padding: .85rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #ffb3b3;
+  font-size: 1.1rem;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  margin-bottom: .5rem;
+}
+
+#taskForm.task-readonly label {
+  opacity: .6;
+}
+
+#taskForm.task-readonly input:not([name="completed"]),
+#taskForm.task-readonly select {
+  cursor: not-allowed;
+}
+
+#taskForm.task-readonly button:not([type="submit"]) {
+  pointer-events: none;
+  opacity: .5;
+}
+
+.modal input:focus,
+.modal select:focus {
+  outline: 2px solid var(--primary);
+  background: #fff;
+}
+
+.modal .full {
+  grid-column: 1/3;
+}
+
+.modal .check {
+  flex-direction: row;
+  align-items: center;
+  font-size: .7rem;
+  margin-top: .5rem;
+  text-transform: none;
+  font-weight: 400;
+}
+
+.modal .check input {
+  margin-right: .4rem;
+}
+
+.modal footer {
+  text-align: right;
+  margin-top: .5rem;
+}
+
+#companyCalcPage form {
+  grid-template-columns: 1fr;
+}
+
+#companyCalcPage input[readonly] {
+  background: #d0d0d0;
+  color: #333;
+}
+
+#companyCalcPage input[name="result"] {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+@media(max-width:700px) {
+  main {
+    flex-direction: column;
+  }
+
+  #filterPane {
+    width: 100%;
+    position: static;
+  }
+
+  .content {
+    width: 100%;
+  }
+
+  .modal form {
+    grid-template-columns: 1fr;
+  }
+
+  .modal .full {
+    grid-column: 1;
+  }
+
+  .modal.narrow {
+    width: 95%;
+  }
+}
+
+/* ===================== MISC ===================== */
+.cursor {
+  cursor: pointer;
+}
+
+
+/* === Calendario (checkbox semana) === */
+.calendar-week {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  margin-bottom: 1rem;
+}
+
+.calendar-week label {
+  font-size: .7rem;
+  display: flex;
+  align-items: center;
+  gap: .25rem;
+  background: #f1f5f7;
+  padding: .35rem .55rem;
+  border-radius: 6px;
+}
+
+.calendar-week input {
+  margin: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+/* === Resumen calendario === */
+#calendarSummary {
+  display: flex;
+  gap: 1rem;
+  margin-top: .5rem;
+  font-size: .7rem;
+  flex-wrap: wrap;
+}
+
+#calendarSummary div {
+  display: flex;
+  flex-direction: column;
+  min-width: 120px;
+}
+
+#calendarSummary span {
+  color: #555;
+  margin-bottom: .2rem;
+  font-weight: 500;
+}
+
+#calendarSummary strong {
+  font-size: .85rem;
+  color: var(--primary);
+}

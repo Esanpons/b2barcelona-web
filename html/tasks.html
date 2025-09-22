@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Tareas</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+</head>
+
+<body>
+    <div id="tasksPage">
+        <header>
+            <span class="modal-title">Tareas</span>
+            <button class="close" type="button">×</button>
+        </header>
+        <div class="section-header">
+            <h2>Listado de tareas</h2>
+            <div>
+                <button class="Buttons" id="BtnAddTask" type="button">+ Nueva tarea</button>
+                <button class="Buttons primary" id="BtnEditTask" type="button" disabled>Editar</button>
+                <button class="Buttons" id="BtnDupTask" type="button" disabled>Duplicar</button>
+                <button class="Buttons" id="BtnDelTask" type="button" disabled>Eliminar</button>
+                <button class="Buttons primary" id="BtnCompleteSelected" type="button" disabled>Completar seleccionadas</button>
+                <button class="Buttons" id="BtnUncompleteSelected" type="button" disabled>Marcar como pendientes</button>
+            </div>
+        </div>
+        <div style="margin-bottom:0.5rem">
+            <label>Mostrar
+                <select id="taskStatusFilter">
+                    <option value="all">Todas</option>
+                    <option value="incomplete">No completadas</option>
+                    <option value="completed">Completadas</option>
+                </select>
+            </label>
+            <input type="text" id="taskSearchFilter" placeholder="Filtrar tareas" />
+        </div>
+        <table id="tasksTable">
+            <thead>
+                <tr>
+                    <th class="select-col">Sel.</th>
+                    <th>Id</th>
+                    <th>Nº tarea cliente</th>
+                    <th>Asunto</th>
+                    <th>Sprint</th>
+                    <th>Nº cliente</th>
+                    <th>Sin cargo</th>
+                    <th>Completado</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <!-- Template modal edición/creación tarea -->
+        <template id="taskModalTmpl">
+            <div class="modal-backdrop">
+                <div class="modal">
+                    <header>
+                        <span class="modal-title">Tarea</span>
+                        <button class="close" type="button">×</button>
+                    </header>
+                    <form id="taskForm">
+                        <label>Id
+                            <input type="number" name="id" readonly />
+                        </label>
+                        <label>Asunto
+                            <input type="text" name="subject" required />
+                        </label>
+                        <label class="full">Comentario para imputación
+                            <input type="text" name="taskDescription" />
+                        </label>
+                        <label class="check">
+                            <input type="checkbox" name="noCharge" /> Tarea sin cargo
+                        </label>
+                        <label class="check">
+                            <input type="checkbox" name="completed" /> Completado
+                        </label>
+                        <label>Nº cliente
+                            <select name="customerNo"></select>
+                        </label>
+                        <label>Nº tarea cliente
+                            <input type="text" name="clientTaskNo" />
+                        </label>
+                        <label>Nº Proyecto cliente
+                            <input type="text" name="clientProjectNo" />
+                        </label>
+                        <label>Descripción proyecto cliente
+                            <input type="text" name="clientProjectDesc" />
+                        </label>
+                        <label class="full">Descripción tarea cliente
+                            <input type="text" name="clientTaskDesc" />
+                        </label>
+                        <label>Sprint tarea cliente
+                            <input type="text" name="sprint" />
+                        </label>
+                        <footer class="full">
+                            <button type="submit" class="Buttons primary">Guardar</button>
+                        </footer>
+                    </form>
+                </div>
+            </div>
+        </template>
+    </div>
+</body>
+
+</html>

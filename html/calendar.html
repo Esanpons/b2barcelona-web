@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+</head>
+
+<body>
+    <div id="calendarPage">
+        <header>
+            <span class="modal-title">Calendario</span>
+            <button class="close" type="button">×</button>
+            <link rel="icon" type="image/png" href="assets/favicon.png" />
+        </header>
+
+        <h3>Días laborables de la semana</h3>
+        <div class="calendar-week" id="weekCfg"></div>
+
+        <div class="section-header" style="margin-top:1rem">
+            <h3>Días especiales</h3>
+            <div>
+                <button class="Buttons" id="BtnAddCal" type="button">+ Nuevo día</button>
+                <button class="Buttons primary" id="BtnEditCal" type="button" disabled>Editar</button>
+                <button class="Buttons" id="BtnDelCal" type="button" disabled>Eliminar</button>
+                <button class="Buttons" id="BtnYearView" type="button">Ver año</button>
+            </div>
+            <label>Año <select id="calYearFilter"></select></label>
+            <label>Tipo
+                <select id="calTypeFilter">
+                    <option value="all">Todos</option>
+                    <option value="festivo">Festivos</option>
+                    <option value="vacaciones">Vacaciones</option>
+                </select>
+            </label>
+        </div>
+
+        <table id="calendarTable">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div id="calendarSummary"></div>
+
+        <template id="calModalTmpl">
+            <div class="modal-backdrop">
+                <div class="modal">
+                    <header><span class="modal-title">Día especial</span><button class="close" type="button">×</button>
+                    </header>
+                    <form id="calForm">
+                        <label>Fecha <input type="date" name="date" required></label>
+                        <label>Tipo
+                            <select name="type" required>
+                                <option value="festivo">Festivo</option>
+                                <option value="vacaciones">Vacaciones</option>
+                            </select>
+                        </label>
+                        <label class="full">Descripción <input type="text" name="desc"></label>
+                        <footer class="full">
+                            <button type="submit" class="Buttons primary">Guardar</button>
+                            <button type="button" id="btnCalDelete" class="Buttons">Eliminar</button>
+                        </footer>
+                    </form>
+                </div>
+            </div>
+        </template>
+    </div>
+</body>
+
+</html>

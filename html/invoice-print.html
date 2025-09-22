@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <title>{{TYPE}} {{NO}}</title>
+  <link rel="stylesheet" href="css/invoice-print.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+</head>
+
+<body>
+  <div class="invoice-container">
+    <header class="main-header">
+      <h1>{{TYPE}}</h1>
+      <div class="invoice-details">
+        <div><span>FECHA:</span> <span>{{DATE}}</span></div>
+        <div><span>NÚMERO:</span> <span>{{NO}}</span></div>
+      </div>
+    </header>
+
+    <section class="parties">
+      <div class="party-details">{{SELLER}}</div>
+      <div class="party-details">{{BUYER}}</div>
+    </section>
+
+    <main>
+      <table class="lines-table">
+        <thead>
+          <tr>
+            <th class="desc">DESCRIPCIÓN</th>
+            <th class="qty">CANTIDAD</th>
+            <th class="price">IMPORTE</th>
+            <th class="total">TOTAL</th>
+          </tr>
+        </thead>
+        <tbody>{{LINES}}</tbody>
+      </table>
+      <section class="totals-section">
+        <div class="totals-box">{{TOTALS}}</div>
+      </section>
+    </main>
+
+    <footer class="payment-info">
+      <h2>FORMA DE PAGO</h2>
+      <p>Transferencia a la cuenta {{IBAN}}</p>
+    </footer>
+    <div class="page-footer">Página {{PAGE_NUM}} de {{PAGE_TOTAL}}</div>
+  </div>
+
+  {{IMPS_SECTION}}
+
+</body>
+
+</html>

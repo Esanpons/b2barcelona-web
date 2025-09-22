@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Facturas</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+</head>
+
+<body>
+    <div id="invoicesPage">
+        <header>
+            <span class="modal-title">Facturas</span>
+            <button class="close" type="button">×</button>
+        </header>
+        <div class="section-header">
+            <h2>Listado de facturas</h2>
+            <div>
+                <button class="Buttons" id="BtnAddInvoice" type="button">+ Nueva factura</button>
+                <button class="Buttons primary" id="BtnEditInvoice" type="button" disabled>Editar</button>
+                <button class="Buttons" id="BtnDelInvoice" type="button" disabled>Eliminar</button>
+                <button class="Buttons" id="BtnPrintInv" type="button" disabled>Imprimir</button>
+            </div>
+            <label>Año <select id="invoiceYearFilter"></select></label>
+        </div>
+        <table id="invoicesTable">
+            <thead>
+                <tr>
+                    <th>Nº</th>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Total</th>
+                    <th>Pagada</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <template id="invoiceModalTmpl">
+            <div class="modal-backdrop">
+                <div class="modal">
+                    <header>
+                        <span class="modal-title">Factura</span>
+                        <button class="close" type="button">×</button>
+                    </header>
+                    <form id="invoiceForm">
+                        <label>Nº factura
+                            <input type="text" name="no" required />
+                        </label>
+                        <label>Fecha
+                            <input type="date" name="date" required />
+                        </label>
+                        <label class="full">Cliente
+                            <select name="customerNo" required></select>
+                        </label>
+                        <label>IVA %
+                            <input type="number" step="0.01" name="vat" />
+                        </label>
+                        <label>IRPF %
+                            <input type="number" step="0.01" name="irpf" />
+                        </label>
+                        <label class="check"><input type="checkbox" name="paid" /> Factura pagada</label>
+                        <label class="full">Líneas imputaciones por página (ej. 25,25)
+                            <input type="text" name="arrayLinesInvoicePrint" placeholder="25,25" />
+                        </label>
+                        <div class="full">
+                            <table id="invoiceLinesTable">
+                                <thead>
+                                    <tr>
+                                        <th>Descripción</th>
+                                        <th>Cantidad</th>
+                                        <th>Importe</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                            <div style="display:flex;gap:.5rem;">
+                                <button type="button" id="BtnAddLine" class="Buttons">+ Añadir línea</button>
+                                <button type="button" id="BtnDelLine" class="Buttons" disabled>- Eliminar línea</button>
+                                <button type="button" id="BtnImportImps" class="Buttons">Traerse imputaciones</button>
+                            </div>
+                        </div>
+                        <footer class="full">
+                            <div id="invoiceTotals"></div>
+                            <div style="display:flex;gap:.5rem;justify-content:flex-end;">
+                                <button type="button" id="BtnPrintInvoice" class="Buttons">Imprimir</button>
+                                <button type="submit" class="Buttons primary">Guardar</button>
+                            </div>
+                        </footer>
+                    </form>
+                </div>
+            </div>
+        </template>
+    </div>
+</body>
+
+</html>
