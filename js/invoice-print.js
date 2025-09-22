@@ -63,16 +63,17 @@ async function printInvoice(inv) {
             </tr>
         `).join('');
 
+
         const vatRate = parseFloat(inv.vat);
         const hasVat = Number.isFinite(vatRate) && vatRate !== 0;
         const irpfRate = parseFloat(inv.irpf);
         const hasIrpf = Number.isFinite(irpfRate) && irpfRate !== 0;
         const formatPercent = (rate) => fmtNum(rate, Number.isInteger(rate) ? 0 : 2);
-
         const base = inv.lines.reduce((sum, l) => sum + (l.qty * inv.priceHour), 0);
         const ivaAmount = hasVat ? base * (vatRate / 100) : 0;
         const irpfAmount = hasIrpf ? base * (irpfRate / 100) : 0;
         const totalAmount = base + ivaAmount - irpfAmount;
+
 
         const totals = [
             `<div><span class="total-label">Base</span> <span>${fmtCurrency(base)}</span></div>`
@@ -90,7 +91,23 @@ async function printInvoice(inv) {
 
         const totalsHtml = totals.join('');
 
+        const paymentLines = [];
+        if (inv.paid) {
+            paymentLines.push(`<p>${i18n.t('Factura pagada')}</p>`);
+        }
+        if (seller.bankName) {
+            paymentLines.push(`<p><strong>${i18n.t('Forma de pago')}:</strong> ${seller.bankName}</p>`);
+        }
+        if (seller.iban) {
+            const transferText = i18n.t('Transferencia a la cuenta {{IBAN}}').replace('{{IBAN}}', seller.iban);
+            paymentLines.push(`<p>${transferText}</p>`);
+        }
+        const paymentHtml = paymentLines.length
+            ? `<section class="payment-info"><h2>${i18n.t('FORMA DE PAGO')}</h2>${paymentLines.join('')}</section>`
+            : '';
+
         const typeLabel = totalAmount < 0 ? i18n.t('Factura rectificativa') : i18n.t('Factura');
+
 
         const finalHtml = template
             .replace(/{{TYPE}}/g, typeLabel)
@@ -100,7 +117,7 @@ async function printInvoice(inv) {
             .replace('{{BUYER}}', buyerHtml)
             .replace('{{LINES}}', linesHtml)
             .replace('{{TOTALS}}', totalsHtml)
-            .replace('{{IBAN}}', seller.iban)
+            .replace('{{PAYMENT_SECTION}}', paymentHtml)
             .replace('{{PAGE_NUM}}', 1)
             .replace('{{PAGE_TOTAL}}', 1);
 
@@ -115,24 +132,43 @@ async function printInvoice(inv) {
             document.body.appendChild(iframe);
         }
 
-        const iframeDoc = iframe.contentWindow.document;
-        iframeDoc.open();
-        iframeDoc.write(finalHtml);
-        iframeDoc.close();
-        iframeDoc.documentElement.lang = i18n.lang;
-        if (window.i18n) i18n.apply(iframeDoc);
+        const invoiceLangUsed = i18n.lang;
+        const invoiceDictUsed = i18n.dict;
+
+        const handleLoad = () => {
+            iframe.removeEventListener('load', handleLoad);
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            iframeDoc.documentElement.lang = invoiceLangUsed;
+            if (window.i18n) {
+                const prevLang = i18n.lang;
+                const prevDict = i18n.dict;
+                i18n.lang = invoiceLangUsed;
+                i18n.dict = invoiceDictUsed;
+                i18n.apply(iframeDoc);
+                i18n.lang = prevLang;
+                i18n.dict = prevDict;
+            }
+            setTimeout(() => {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+            }, 200);
+        };
+
+        iframe.addEventListener('load', handleLoad);
+
+        if ('srcdoc' in iframe) {
+            iframe.srcdoc = finalHtml;
+        } else {
+            const iframeDoc = iframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write(finalHtml);
+            iframeDoc.close();
+        }
 
         if (invoiceLang !== originalLang) {
             i18n.lang = originalLang;
             i18n.dict = originalDict;
         }
-
-        iframe.onload = function () {
-            setTimeout(function () {
-                iframe.contentWindow.focus();
-                iframe.contentWindow.print();
-            }, 200);
-        };
 
     } catch (error) {
         console.error('Error al generar la factura:', error);
