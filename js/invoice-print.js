@@ -132,24 +132,43 @@ async function printInvoice(inv) {
             document.body.appendChild(iframe);
         }
 
-        const iframeDoc = iframe.contentWindow.document;
-        iframeDoc.open();
-        iframeDoc.write(finalHtml);
-        iframeDoc.close();
-        iframeDoc.documentElement.lang = i18n.lang;
-        if (window.i18n) i18n.apply(iframeDoc);
+        const invoiceLangUsed = i18n.lang;
+        const invoiceDictUsed = i18n.dict;
+
+        const handleLoad = () => {
+            iframe.removeEventListener('load', handleLoad);
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            iframeDoc.documentElement.lang = invoiceLangUsed;
+            if (window.i18n) {
+                const prevLang = i18n.lang;
+                const prevDict = i18n.dict;
+                i18n.lang = invoiceLangUsed;
+                i18n.dict = invoiceDictUsed;
+                i18n.apply(iframeDoc);
+                i18n.lang = prevLang;
+                i18n.dict = prevDict;
+            }
+            setTimeout(() => {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+            }, 200);
+        };
+
+        iframe.addEventListener('load', handleLoad);
+
+        if ('srcdoc' in iframe) {
+            iframe.srcdoc = finalHtml;
+        } else {
+            const iframeDoc = iframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write(finalHtml);
+            iframeDoc.close();
+        }
 
         if (invoiceLang !== originalLang) {
             i18n.lang = originalLang;
             i18n.dict = originalDict;
         }
-
-        iframe.onload = function () {
-            setTimeout(function () {
-                iframe.contentWindow.focus();
-                iframe.contentWindow.print();
-            }, 200);
-        };
 
     } catch (error) {
         console.error('Error al generar la factura:', error);
