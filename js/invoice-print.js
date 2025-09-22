@@ -63,17 +63,32 @@ async function printInvoice(inv) {
             </tr>
         `).join('');
 
+        const vatRate = parseFloat(inv.vat);
+        const hasVat = Number.isFinite(vatRate) && vatRate !== 0;
+        const irpfRate = parseFloat(inv.irpf);
+        const hasIrpf = Number.isFinite(irpfRate) && irpfRate !== 0;
+        const formatPercent = (rate) => fmtNum(rate, Number.isInteger(rate) ? 0 : 2);
+
         const base = inv.lines.reduce((sum, l) => sum + (l.qty * inv.priceHour), 0);
-        const ivaAmount = base * (inv.vat / 100);
-        const irpfAmount = base * (inv.irpf / 100);
+        const ivaAmount = hasVat ? base * (vatRate / 100) : 0;
+        const irpfAmount = hasIrpf ? base * (irpfRate / 100) : 0;
         const totalAmount = base + ivaAmount - irpfAmount;
 
-        const totalsHtml = `
-            <div><span class="total-label">Base</span> <span>${fmtCurrency(base)}</span></div>
-            <div><span class="total-label">+ IVA (${inv.vat}%)</span> <span>${fmtCurrency(ivaAmount)}</span></div>
-            <div><span class="total-label">- IRPF (${inv.irpf}%)</span> <span>${fmtCurrency(irpfAmount)}</span></div>
-            <div class="final-total"><span class="total-label">TOTAL</span> <span>${fmtCurrency(totalAmount)}</span></div>
-        `;
+        const totals = [
+            `<div><span class="total-label">Base</span> <span>${fmtCurrency(base)}</span></div>`
+        ];
+
+        if (hasVat) {
+            totals.push(`<div><span class="total-label">+ IVA (${formatPercent(vatRate)}%)</span> <span>${fmtCurrency(ivaAmount)}</span></div>`);
+        }
+
+        if (hasIrpf) {
+            totals.push(`<div><span class="total-label">- IRPF (${formatPercent(irpfRate)}%)</span> <span>${fmtCurrency(irpfAmount)}</span></div>`);
+        }
+
+        totals.push(`<div class="final-total"><span class="total-label">TOTAL</span> <span>${fmtCurrency(totalAmount)}</span></div>`);
+
+        const totalsHtml = totals.join('');
 
         const typeLabel = totalAmount < 0 ? i18n.t('Factura rectificativa') : i18n.t('Factura');
 
