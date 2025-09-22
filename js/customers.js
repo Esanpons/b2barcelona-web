@@ -107,7 +107,7 @@ function openCustomerModal(customer = null, onSave) {
   form.addEventListener("submit", async e => {
     e.preventDefault();
     const data = sanitizeStrings(Object.fromEntries(new FormData(form).entries()));
-    ["priceHour", "vat", "irpf", "minimumMonthlyHours", "minimumDailyHours"].forEach(f => data[f] = parseFloat(data[f] || 0));
+    ["priceHour", "vat", "irpf"].forEach(f => data[f] = parseFloat(data[f] || 0));
     try {
       if (customer) {
         await db.update('customers', { no: customer.no }, data);
