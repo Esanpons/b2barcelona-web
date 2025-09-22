@@ -1,10 +1,10 @@
 /*************** Empresa (editar directo) ****************/
 let currentCompanyBackdrop = null;
 
-document.getElementById("btnCompany").addEventListener("click", openCompanyPopup);
+const companyButton = document.getElementById("btnCompany");
+if (companyButton) companyButton.addEventListener("click", openCompanyPopup);
 
 function openCompanyPopup() {
-  // Cerrar si ya está abierto
   if (currentCompanyBackdrop) {
     currentCompanyBackdrop.remove();
     currentCompanyBackdrop = null;
@@ -26,10 +26,8 @@ function openCompanyModal(tmpl) {
   const bd = clone.querySelector(".modal-backdrop");
   const form = clone.querySelector("#companyForm");
 
-  // Guardamos referencia para poder cerrarlo externamente si hace falta
   currentCompanyBackdrop = bd;
 
-  // Rellenar datos actuales
   Object.entries(company).forEach(([k, v]) => {
     if (form.elements[k] != null) form.elements[k].value = v;
   });
@@ -48,14 +46,9 @@ function openCompanyModal(tmpl) {
   document.addEventListener('keydown', handleEsc);
   bd.querySelector(".close").addEventListener("click", closeModal);
 
-  const btnCalc = form.querySelector("#btnCompanyCalc");
-  if (btnCalc) btnCalc.addEventListener("click", () => { if (window.openCompanyCalcPopup) openCompanyCalcPopup(); });
-
   form.addEventListener("submit", async e => {
     e.preventDefault();
     const data = sanitizeStrings(Object.fromEntries(new FormData(form).entries()));
-    ["amountAutonomos", "totalVacationDays", "amountNomina", "tithePercent", "minimumHoursMonth", "incomeAmount", "extraAmounts"]
-      .forEach(f => data[f] = parseFloat(data[f] || 0));
     try {
       if (Object.prototype.hasOwnProperty.call(company, 'id')) {
         await db.update('company', { id: company.id }, data);
