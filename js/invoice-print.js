@@ -91,6 +91,21 @@ async function printInvoice(inv) {
 
         const totalsHtml = totals.join('');
 
+        const paymentLines = [];
+        if (inv.paid) {
+            paymentLines.push(`<p>${i18n.t('Factura pagada')}</p>`);
+        }
+        if (seller.bankName) {
+            paymentLines.push(`<p><strong>${i18n.t('Forma de pago')}:</strong> ${seller.bankName}</p>`);
+        }
+        if (seller.iban) {
+            const transferText = i18n.t('Transferencia a la cuenta {{IBAN}}').replace('{{IBAN}}', seller.iban);
+            paymentLines.push(`<p>${transferText}</p>`);
+        }
+        const paymentHtml = paymentLines.length
+            ? `<section class="payment-info"><h2>${i18n.t('FORMA DE PAGO')}</h2>${paymentLines.join('')}</section>`
+            : '';
+
         const typeLabel = totalAmount < 0 ? i18n.t('Factura rectificativa') : i18n.t('Factura');
 
 
