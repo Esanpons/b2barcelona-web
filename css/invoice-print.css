@@ -13,8 +13,7 @@ body {
     --header-blue: #00acb8;
 }
 
-.invoice-container,
-.imputations-page {
+.invoice-container {
     position: relative;
     width: 100%;
     min-height: 100vh;
@@ -107,13 +106,7 @@ tbody td {
     /* un poco más grande que el valor base */
 }
 
-.imps-table td {
-    padding: 4px 12px 4px 8px;
-    /* filas más compactas y algo de espacio a la derecha */
-}
-
-.page-footer,
-.imps-footer {
+.page-footer {
     position: absolute;
     bottom: 20px;
     left: 0;
@@ -182,28 +175,6 @@ tbody td {
 
 .payment-info p {
     margin: 0;
-}
-
-.imputations-page .main-header {
-    margin-bottom: 20px;
-}
-
-.imps-table .date-col {
-    width: 15%;
-}
-
-.imps-table .task-col {
-    width: 15%;
-}
-
-.imps-table .qty-col {
-    width: 15%;
-    text-align: right;
-}
-
-.imps-table .nocharge-col {
-    width: 10%;
-    text-align: center;
 }
 
 /* --- REGLAS DE IMPRESIÓN ESPECÍFICAS Y CRUCIALES --- */
