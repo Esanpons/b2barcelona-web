@@ -57,18 +57,6 @@ html {
   margin-top: -2px;
 }
 
-.env-indicator {
-  margin-left: 1rem;
-  display: none;
-}
-
-.env-indicator.test {
-  display: inline;
-  color: red;
-  font-weight: 700;
-  font-size: 2rem;
-}
-
 /* ===================== LAYOUT ===================== */
 main {
   max-width: 1500px;
