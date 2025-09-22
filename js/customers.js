@@ -1,7 +1,8 @@
 /*************** Clientes (popup externo) ****************/
 let currentCustomersBackdrop = null;
 
-document.getElementById("btnCustomers").addEventListener("click", openCustomersPopup);
+const customersButton = document.getElementById("btnCustomers");
+if (customersButton) customersButton.addEventListener("click", openCustomersPopup);
 
 function openCustomersPopup() {
   if (currentCustomersBackdrop) { currentCustomersBackdrop.remove(); currentCustomersBackdrop = null; }
@@ -72,8 +73,6 @@ function openCustomersPopup() {
             await loadFromDb();
             selectedCustomerNo = null;
             renderCustomers();
-            renderImputations();
-            if (window.refreshTasksPopup) window.refreshTasksPopup();
           } catch (err) {
             console.error(err);
             alert(i18n.t('Error al eliminar el cliente'));
@@ -108,7 +107,7 @@ function openCustomerModal(customer = null, onSave) {
   form.addEventListener("submit", async e => {
     e.preventDefault();
     const data = sanitizeStrings(Object.fromEntries(new FormData(form).entries()));
-    ["priceHour", "vat", "irpf", "minimumMonthlyHours", "minimumDailyHours"].forEach(f => data[f] = parseFloat(data[f] || 0));
+    ["priceHour", "vat", "irpf"].forEach(f => data[f] = parseFloat(data[f] || 0));
     try {
       if (customer) {
         await db.update('customers', { no: customer.no }, data);
@@ -118,9 +117,6 @@ function openCustomerModal(customer = null, onSave) {
       await loadFromDb();
       backdrop.remove();
       if (onSave) onSave(data.no);
-      loadTasksInSelects();
-      renderImputations();
-      if (window.refreshTasksPopup) window.refreshTasksPopup();
     } catch (err) {
       console.error(err);
       alert('Error al guardar el cliente');

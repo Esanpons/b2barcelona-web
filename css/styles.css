@@ -189,37 +189,6 @@ main {
   color: var(--accent);
 }
 
-/* Nuevo bloque selector tarea */
-.current-task-block {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 1rem 0 1.25rem;
-}
-
-.current-task-block .field-label {
-  font-size: .65rem;
-  color: #555;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: .5px;
-  margin-bottom: .25rem;
-}
-
-.current-task-block .field-control {
-  padding: .45rem .55rem;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  font-size: .8rem;
-  background: #f9fafb;
-  min-width: 220px;
-}
-
-.current-task-block .field-control:focus {
-  outline: 2px solid var(--primary);
-  background: #fff;
-}
-
 /* ===================== BUTTONS ===================== */
 .Buttons {
   min-width: 130px;
@@ -382,24 +351,6 @@ tbody tr.selected {
   background: #cfe8ff !important;
 }
 
-#tasksTable th.select-col,
-#tasksTable td.select-cell {
-  width: 48px;
-  text-align: center;
-}
-
-#tasksTable td.select-cell input {
-  cursor: pointer;
-}
-
-#tasksTable tbody tr.bulk-selected:not(.selected) {
-  background: #fff1d6;
-}
-
-#tasksTable tbody tr.selected.bulk-selected {
-  box-shadow: inset 0 0 0 2px #ffb347;
-}
-
 #invoiceTotals {
   font-size: .9rem;
   font-weight: 600;
@@ -417,8 +368,6 @@ tbody tr.selected {
   font-weight: 700;
 }
 
-#tasksTable td,
-#tasksTable th,
 #customersTable td,
 #customersTable th {
   white-space: nowrap;
@@ -539,35 +488,6 @@ tbody tr.selected {
   border-radius: 6px;
   font-size: .8rem;
   background: #f9fafb;
-}
-
-.task-duplicate-banner {
-  grid-column: 1 / 3;
-  background: #ffe3e3;
-  color: #b00020;
-  font-weight: 700;
-  text-align: center;
-  padding: .85rem 1rem;
-  border-radius: 10px;
-  border: 1px solid #ffb3b3;
-  font-size: 1.1rem;
-  letter-spacing: .5px;
-  text-transform: uppercase;
-  margin-bottom: .5rem;
-}
-
-#taskForm.task-readonly label {
-  opacity: .6;
-}
-
-#taskForm.task-readonly input:not([name="completed"]),
-#taskForm.task-readonly select {
-  cursor: not-allowed;
-}
-
-#taskForm.task-readonly button:not([type="submit"]) {
-  pointer-events: none;
-  opacity: .5;
 }
 
 .modal input:focus,
