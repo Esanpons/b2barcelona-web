@@ -63,16 +63,17 @@ async function printInvoice(inv) {
             </tr>
         `).join('');
 
+
         const vatRate = parseFloat(inv.vat);
         const hasVat = Number.isFinite(vatRate) && vatRate !== 0;
         const irpfRate = parseFloat(inv.irpf);
         const hasIrpf = Number.isFinite(irpfRate) && irpfRate !== 0;
         const formatPercent = (rate) => fmtNum(rate, Number.isInteger(rate) ? 0 : 2);
-
         const base = inv.lines.reduce((sum, l) => sum + (l.qty * inv.priceHour), 0);
         const ivaAmount = hasVat ? base * (vatRate / 100) : 0;
         const irpfAmount = hasIrpf ? base * (irpfRate / 100) : 0;
         const totalAmount = base + ivaAmount - irpfAmount;
+
 
         const totals = [
             `<div><span class="total-label">Base</span> <span>${fmtCurrency(base)}</span></div>`
@@ -92,6 +93,7 @@ async function printInvoice(inv) {
 
         const typeLabel = totalAmount < 0 ? i18n.t('Factura rectificativa') : i18n.t('Factura');
 
+
         const finalHtml = template
             .replace(/{{TYPE}}/g, typeLabel)
             .replace(/{{NO}}/g, inv.no)
@@ -100,7 +102,7 @@ async function printInvoice(inv) {
             .replace('{{BUYER}}', buyerHtml)
             .replace('{{LINES}}', linesHtml)
             .replace('{{TOTALS}}', totalsHtml)
-            .replace('{{IBAN}}', seller.iban)
+            .replace('{{PAYMENT_SECTION}}', paymentHtml)
             .replace('{{PAGE_NUM}}', 1)
             .replace('{{PAGE_TOTAL}}', 1);
 
