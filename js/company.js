@@ -117,6 +117,16 @@ function openCompanyModal(tmpl) {
     e.preventDefault();
     const data = sanitizeStrings(Object.fromEntries(new FormData(form).entries()));
     if (data.logo === "") data.logo = null;
+    ["invoiceLogoMaxWidth", "invoiceLogoMaxHeight"].forEach(field => {
+      if (!Object.prototype.hasOwnProperty.call(data, field)) return;
+      const value = data[field];
+      if (value === "" || value == null) {
+        data[field] = null;
+        return;
+      }
+      const parsed = Number.parseInt(value, 10);
+      data[field] = Number.isFinite(parsed) ? parsed : null;
+    });
     try {
       if (Object.prototype.hasOwnProperty.call(company, 'id')) {
         await db.update('company', { id: company.id }, data);
