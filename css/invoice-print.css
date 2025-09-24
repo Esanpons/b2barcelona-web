@@ -1,7 +1,7 @@
 /* --- Estilos base (sin apenas cambios) --- */
 body {
     /* Usamos la misma tipografía que el layout de Business Central */
-    font-family: 'Comic Sans MS', Arial, Helvetica, sans-serif;
+    font-family: 'Montserrat';
     font-size: 11pt;
     color: #000;
     margin: 0;
@@ -9,8 +9,8 @@ body {
 }
 
 :root {
-    --accent-color: #00acb8;
-    --header-blue: #00acb8;
+    --accent-color: #003c64;
+    --header-blue: #003c64;
 }
 
 .invoice-container {
