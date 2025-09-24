@@ -51,6 +51,21 @@
                         <label>Número inicial factura
                             <input type="text" name="invoiceNumbering" />
                         </label>
+                        <fieldset class="full company-logo">
+                            <legend>Logo</legend>
+                            <div class="company-logo__preview">
+                                <img class="company-logo__image is-hidden" alt="Logo de la empresa" />
+                                <div class="company-logo__empty">Actualmente no hay ningún logo asignado.</div>
+                            </div>
+                            <div class="company-logo__actions">
+                                <button type="button" class="Buttons secondary company-logo__add">Añadir logo</button>
+                                <button type="button" class="Buttons secondary company-logo__change is-hidden">Cambiar logo</button>
+                                <button type="button" class="Buttons danger company-logo__remove is-hidden">Eliminar logo</button>
+                                <input type="file" class="company-logo__file" accept="image/*" hidden />
+                            </div>
+                            <p class="company-logo__hint">El logo se guardará en la base de datos en formato Base64.</p>
+                        </fieldset>
+                        <input type="hidden" name="logo" />
                         <footer class="full">
                             <button type="submit" class="Buttons primary">Guardar</button>
                         </footer>
