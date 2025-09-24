@@ -11,6 +11,8 @@ body {
 :root {
     --accent-color: #003c64;
     --header-blue: #003c64;
+    --invoice-logo-max-width: 300px;
+    --invoice-logo-max-height: 300px;
 }
 
 .invoice-container {
@@ -28,9 +30,28 @@ body {
 
 .main-header {
     display: flex;
-    justify-content: space-between;
     align-items: flex-start;
+    gap: 20px;
     margin-bottom: 40px;
+}
+
+.main-header__branding {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    max-width: var(--invoice-logo-max-width);
+    max-height: var(--invoice-logo-max-height);
+}
+
+.main-header__branding:empty {
+    display: none;
+}
+
+.main-header__title-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
 }
 
 .main-header h1 {
@@ -39,6 +60,16 @@ body {
     color: var(--header-blue);
     margin: 0;
     font-weight: bold;
+    text-align: center;
+}
+
+.invoice-logo {
+    display: block;
+    max-width: 100%;
+    max-height: var(--invoice-logo-max-height);
+    width: auto;
+    height: auto;
+    object-fit: contain;
 }
 
 .invoice-details {

@@ -18,6 +18,15 @@ function fmtDate(d) {
     });
 }
 
+function escapeAttribute(value) {
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 async function printInvoice(inv) {
     const originalLang = i18n.lang;
     const originalDict = i18n.dict;
@@ -63,7 +72,6 @@ async function printInvoice(inv) {
             </tr>
         `).join('');
 
-
         const vatRate = parseFloat(inv.vat);
         const hasVat = Number.isFinite(vatRate) && vatRate !== 0;
         const irpfRate = parseFloat(inv.irpf);
@@ -91,6 +99,10 @@ async function printInvoice(inv) {
 
         const totalsHtml = totals.join('');
 
+        const logoHtml = seller.logo
+            ? `<img src="${seller.logo}" alt="${escapeAttribute(seller.name ? `Logo de ${seller.name}` : 'Logo')}" class="invoice-logo" />`
+            : '';
+
         const paymentLines = [];
         if (inv.paid) {
             paymentLines.push(`<p>${i18n.t('Factura pagada')}</p>`);
@@ -117,6 +129,7 @@ async function printInvoice(inv) {
             .replace('{{BUYER}}', buyerHtml)
             .replace('{{LINES}}', linesHtml)
             .replace('{{TOTALS}}', totalsHtml)
+            .replace('{{LOGO}}', logoHtml)
             .replace('{{PAYMENT_SECTION}}', paymentHtml)
             .replace('{{PAGE_NUM}}', 1)
             .replace('{{PAGE_TOTAL}}', 1);
