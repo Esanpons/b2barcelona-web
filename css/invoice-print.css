@@ -11,8 +11,8 @@ body {
 :root {
     --accent-color: #003c64;
     --header-blue: #003c64;
-    --invoice-logo-max-width: 100px;
-    --invoice-logo-max-height: 100px;
+    --invoice-logo-max-width: 220px;
+    --invoice-logo-max-height: 220px;
 }
 
 .invoice-container {
