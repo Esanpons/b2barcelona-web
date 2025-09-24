@@ -27,6 +27,19 @@ function escapeAttribute(value) {
         .replace(/'/g, '&#39;');
 }
 
+function resolveLogoDimension(value, fallback) {
+    if (value === null || value === undefined) return fallback;
+    if (typeof value === 'number' && Number.isFinite(value)) {
+        return `${value}px`;
+    }
+    const str = String(value).trim();
+    if (!str) return fallback;
+    const match = str.match(/^(\d+(?:\.\d+)?)(px|em|rem|%)?$/i);
+    if (!match) return fallback;
+    const unit = (match[2] || 'px').toLowerCase();
+    return `${match[1]}${unit}`;
+}
+
 async function printInvoice(inv) {
     const originalLang = i18n.lang;
     const originalDict = i18n.dict;
@@ -120,8 +133,13 @@ async function printInvoice(inv) {
 
         const typeLabel = totalAmount < 0 ? i18n.t('Factura rectificativa') : i18n.t('Factura');
 
+        const logoMaxWidth = resolveLogoDimension(seller.invoiceLogoMaxWidth, '220px');
+        const logoMaxHeight = resolveLogoDimension(seller.invoiceLogoMaxHeight, '220px');
+        const customLogoStyle = `\n    <style>:root { --invoice-logo-max-width: ${logoMaxWidth}; --invoice-logo-max-height: ${logoMaxHeight}; }</style>`;
 
-        const finalHtml = template
+        let finalHtml = template.replace('</head>', `${customLogoStyle}\n</head>`);
+
+        finalHtml = finalHtml
             .replace(/{{TYPE}}/g, typeLabel)
             .replace(/{{NO}}/g, inv.no)
             .replace('{{DATE}}', fmtDate(inv.date))
