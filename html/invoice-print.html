@@ -14,7 +14,10 @@
 <body>
   <div class="invoice-container">
     <header class="main-header">
-      <h1>{{TYPE}}</h1>
+      <div class="main-header__branding">{{LOGO}}</div>
+      <div class="main-header__title-wrapper">
+        <h1 class="main-header__title">{{TYPE}}</h1>
+      </div>
       <div class="invoice-details">
         <div><span>FECHA:</span> <span>{{DATE}}</span></div>
         <div><span>NÚMERO:</span> <span>{{NO}}</span></div>
