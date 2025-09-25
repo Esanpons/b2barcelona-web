@@ -3,6 +3,7 @@
 const BASE_APP_TITLE = 'Aesva ERP';
 
 window.customers = [];
+const customerNoCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 window.invoices = [];
 window.company = {};
 
@@ -17,7 +18,8 @@ function applyCompanyTitle() {
 applyCompanyTitle();
 
 async function loadCustomers() {
-  window.customers = await db.select('customers');
+  const items = await db.select('customers');
+  window.customers = items.sort((a, b) => customerNoCollator.compare(a.no ?? '', b.no ?? ''));
 }
 
 async function loadInvoices() {
