@@ -306,7 +306,15 @@ function openInvoicesPopup() {
             }
             if (!confirm(`Se han leído ${mapped.length} cabeceras de factura. ¿Quieres continuar?`)) return;
             for (const record of mapped) {
-              await db.insert('invoices', record);
+              try {
+                await db.insert('invoices', record);
+              } catch (err) {
+                if (err && err.code === '23505' && record.no) {
+                  await db.update('invoices', { no: record.no }, record);
+                } else {
+                  throw err;
+                }
+              }
               inserted += 1;
               if (record.no) lastInvoice = record.no;
             }
@@ -352,7 +360,15 @@ function openInvoicesPopup() {
             }
             if (!confirm(`Se han leído ${mapped.length} líneas de factura. ¿Quieres continuar?`)) return;
             for (const record of mapped) {
-              await db.insert('invoice_lines', record);
+              try {
+                await db.insert('invoice_lines', record);
+              } catch (err) {
+                if (err && err.code === '23505' && record.id !== undefined) {
+                  await db.update('invoice_lines', { id: record.id }, record);
+                } else {
+                  throw err;
+                }
+              }
               inserted += 1;
               if (record.invoiceNo) lastInvoice = record.invoiceNo;
             }
