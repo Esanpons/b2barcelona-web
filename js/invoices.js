@@ -1,6 +1,116 @@
 /*************** Facturas (popup externo) ****************/
 let currentInvoicesBackdrop = null;
 
+function parseCsvLine(line) {
+  const values = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i += 1) {
+    const char = line[i];
+    if (inQuotes) {
+      if (char === '"') {
+        if (line[i + 1] === '"') {
+          current += '"';
+          i += 1;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        current += char;
+      }
+    } else if (char === '"') {
+      inQuotes = true;
+    } else if (char === ',') {
+      values.push(current);
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  values.push(current);
+  return values;
+}
+
+function parseCsv(text) {
+  const cleanText = text.replace(/\ufeff/g, '').replace(/\r/g, '');
+  const lines = cleanText.split('\n').map(l => l.trim()).filter(Boolean);
+  if (!lines.length) return [];
+  const headers = parseCsvLine(lines.shift()).map(h => h.trim());
+  return lines.map(line => {
+    const values = parseCsvLine(line);
+    const entry = {};
+    headers.forEach((header, idx) => {
+      const value = idx < values.length ? values[idx] : '';
+      entry[header] = value.trim();
+    });
+    return entry;
+  });
+}
+
+function cleanObject(obj) {
+  const out = {};
+  Object.entries(obj).forEach(([key, value]) => {
+    if (value !== undefined) out[key] = value;
+  });
+  return out;
+}
+
+function toNumber(value) {
+  if (value === undefined || value === null) return undefined;
+  const normalized = String(value).trim();
+  if (!normalized) return undefined;
+  const num = Number(normalized.replace(',', '.'));
+  return Number.isFinite(num) ? num : undefined;
+}
+
+function toInteger(value) {
+  const num = toNumber(value);
+  return num === undefined ? undefined : Math.trunc(num);
+}
+
+function toBoolean(value) {
+  if (value === undefined || value === null) return undefined;
+  const normalized = String(value).trim();
+  if (!normalized) return undefined;
+  if (/^(true|1|si|sí|yes)$/i.test(normalized)) return true;
+  if (/^(false|0|no)$/i.test(normalized)) return false;
+  return undefined;
+}
+
+function emptyToNull(value) {
+  if (value === undefined || value === null) return undefined;
+  const normalized = String(value).trim();
+  if (!normalized) return null;
+  if (/^null$/i.test(normalized)) return null;
+  return normalized;
+}
+
+function mapInvoiceHeaderRow(row) {
+  const data = {
+    no: row.no ? row.no.trim() : undefined,
+    date: row.date ? row.date.trim() : undefined,
+    customerNo: row.customer_no ? row.customer_no.trim() : (row.customerNo ? row.customerNo.trim() : undefined),
+    priceHour: toNumber(row.price_hour ?? row.priceHour),
+    vat: toNumber(row.vat),
+    irpf: toNumber(row.irpf),
+    createdAt: emptyToNull(row.created_at ?? row.createdAt),
+    arrayLinesInvoicePrint: emptyToNull(row.array_lines_invoice_print ?? row.arrayLinesInvoicePrint),
+    invoicePayment: toBoolean(row.invoice_payment ?? row.invoicePayment)
+  };
+  return cleanObject(data);
+}
+
+function mapInvoiceLineRow(row) {
+  const data = {
+    id: toInteger(row.id),
+    invoiceNo: row.invoice_no ? row.invoice_no.trim() : (row.invoiceNo ? row.invoiceNo.trim() : undefined),
+    lineNo: toInteger(row.line_no ?? row.lineNo),
+    description: row.description !== undefined ? row.description : undefined,
+    qty: toNumber(row.qty)
+  };
+  return cleanObject(data);
+}
+
 const invoicesButton = document.getElementById("btnInvoices");
 if (invoicesButton) invoicesButton.addEventListener("click", openInvoicesPopup);
 
@@ -60,8 +170,22 @@ function openInvoicesPopup() {
       const btnEdit = bd.querySelector('#BtnEditInvoice');
       const btnDel = bd.querySelector('#BtnDelInvoice');
       const btnPrintList = bd.querySelector('#BtnPrintInv');
+      const btnImportHeaders = bd.querySelector('#BtnImportInvoiceHeaders');
+      const btnImportLines = bd.querySelector('#BtnImportInvoiceLines');
       const yearSel = bd.querySelector('#invoiceYearFilter');
       const closeBtn = bd.querySelector('.close');
+
+      const headersFileInput = document.createElement('input');
+      headersFileInput.type = 'file';
+      headersFileInput.accept = '.csv,text/csv';
+      headersFileInput.style.display = 'none';
+      page.appendChild(headersFileInput);
+
+      const linesFileInput = document.createElement('input');
+      linesFileInput.type = 'file';
+      linesFileInput.accept = '.csv,text/csv';
+      linesFileInput.style.display = 'none';
+      page.appendChild(linesFileInput);
 
       function closePopup() {
         bd.remove();
@@ -93,6 +217,8 @@ function openInvoicesPopup() {
         btnEdit.disabled = !has;
         btnDel.disabled = !has || (inv && inv.paid);
         btnPrintList.disabled = !has;
+        if (btnImportHeaders) btnImportHeaders.disabled = false;
+        if (btnImportLines) btnImportLines.disabled = false;
       }
 
       function render() {
@@ -114,6 +240,23 @@ function openInvoicesPopup() {
           tableBody.appendChild(tr);
         });
         updateButtons();
+      }
+
+      function refreshAfterImport(lastNo, fallbackYear) {
+        renderYearOptions();
+        let targetYear = fallbackYear;
+        if (lastNo) {
+          const inv = invoices.find(i => i.no === lastNo);
+          if (inv) {
+            selectedNo = lastNo;
+            targetYear = inv.date.substring(0, 4);
+          }
+        }
+        if (targetYear) {
+          const options = Array.from(yearSel.options);
+          if (options.some(opt => opt.value === targetYear)) yearSel.value = targetYear;
+        }
+        render();
       }
 
       btnAdd.addEventListener('click', () => openInvoiceModal(null, no => { selectedNo = no; render(); }));
@@ -141,6 +284,145 @@ function openInvoicesPopup() {
         const inv = invoices.find(i => i.no === selectedNo);
         if (inv) printInvoice(inv);
       });
+      if (btnImportHeaders) {
+        btnImportHeaders.addEventListener('click', () => headersFileInput.click());
+        headersFileInput.addEventListener('change', async () => {
+          if (!headersFileInput.files || !headersFileInput.files[0]) return;
+          btnImportHeaders.disabled = true;
+          let inserted = 0;
+          let lastInvoice = null;
+          const previousYear = yearSel.value;
+          try {
+            const text = await headersFileInput.files[0].text();
+            const rows = parseCsv(text);
+            if (!rows.length) {
+              alert('El archivo CSV no contiene registros.');
+              return;
+            }
+            const mapped = rows.map(mapInvoiceHeaderRow).filter(r => Object.keys(r).length);
+            if (!mapped.length) {
+              alert('No se han encontrado cabeceras válidas en el CSV.');
+              return;
+            }
+            if (!confirm(`Se han leído ${mapped.length} cabeceras de factura. ¿Quieres continuar?`)) return;
+            for (const record of mapped) {
+              try {
+                await db.insert('invoices', record);
+              } catch (err) {
+                if (err && err.code === '23505' && record.no) {
+                  await db.update('invoices', { no: record.no }, record);
+                } else {
+                  throw err;
+                }
+              }
+              inserted += 1;
+              if (record.no) lastInvoice = record.no;
+            }
+            await loadInvoices();
+            refreshAfterImport(lastInvoice, previousYear);
+            alert('Importación de cabeceras completada correctamente.');
+          } catch (err) {
+            console.error(err);
+            if (inserted > 0) {
+              try {
+                await loadInvoices();
+                refreshAfterImport(lastInvoice, previousYear);
+              } catch (loadErr) {
+                console.error(loadErr);
+              }
+            }
+            alert('Se produjo un error al importar las cabeceras. Revisa la consola para más detalles.');
+          } finally {
+            btnImportHeaders.disabled = false;
+            headersFileInput.value = '';
+          }
+        });
+      }
+      if (btnImportLines) {
+        btnImportLines.addEventListener('click', () => linesFileInput.click());
+        linesFileInput.addEventListener('change', async () => {
+          if (!linesFileInput.files || !linesFileInput.files[0]) return;
+          btnImportLines.disabled = true;
+          let inserted = 0;
+          let lastInvoice = null;
+          const previousYear = yearSel.value;
+          try {
+            const text = await linesFileInput.files[0].text();
+            const rows = parseCsv(text);
+            if (!rows.length) {
+              alert('El archivo CSV no contiene registros.');
+              return;
+            }
+            const mapped = rows.map(mapInvoiceLineRow).filter(r => Object.keys(r).length);
+            if (!mapped.length) {
+              alert('No se han encontrado líneas válidas en el CSV.');
+              return;
+            }
+            if (!confirm(`Se han leído ${mapped.length} líneas de factura. ¿Quieres continuar?`)) return;
+            const saveInvoiceLine = async (record) => {
+              const baseRecord = { ...record };
+              try {
+                await db.insert('invoice_lines', baseRecord);
+                return;
+              } catch (err) {
+                if (!err || err.code !== '23505') throw err;
+              }
+
+              const dataWithoutId = { ...baseRecord };
+              delete dataWithoutId.id;
+
+              if (record.id !== undefined) {
+                try {
+                  await db.update('invoice_lines', { id: record.id }, dataWithoutId);
+                  return;
+                } catch (updateErr) {
+                  if (updateErr && updateErr.code && updateErr.code !== '23505') throw updateErr;
+                }
+              }
+
+              if (record.invoiceNo && record.lineNo !== undefined) {
+                try {
+                  await db.update('invoice_lines', { invoiceNo: record.invoiceNo, lineNo: record.lineNo }, dataWithoutId);
+                  return;
+                } catch (updateErr) {
+                  if (updateErr && updateErr.code && updateErr.code !== '23505') throw updateErr;
+                }
+
+                await db.delete('invoice_lines', { invoiceNo: record.invoiceNo, lineNo: record.lineNo });
+              }
+
+              if (record.id !== undefined) {
+                await db.delete('invoice_lines', { id: record.id });
+              }
+
+              await db.insert('invoice_lines', baseRecord);
+            };
+
+            for (const record of mapped) {
+              await saveInvoiceLine(record);
+              inserted += 1;
+              if (record.invoiceNo) lastInvoice = record.invoiceNo;
+            }
+            await loadInvoices();
+            refreshAfterImport(lastInvoice, previousYear);
+            alert('Importación de líneas completada correctamente.');
+          } catch (err) {
+            console.error(err);
+            if (inserted > 0) {
+              try {
+                await loadInvoices();
+                refreshAfterImport(lastInvoice, previousYear);
+              } catch (loadErr) {
+                console.error(loadErr);
+              }
+            }
+            alert('Se produjo un error al importar las líneas. Revisa la consola para más detalles.');
+          } finally {
+            btnImportLines.disabled = false;
+            linesFileInput.value = '';
+          }
+        });
+      }
       yearSel.addEventListener('change', render);
       closeBtn.addEventListener('click', closePopup);
 

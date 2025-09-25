@@ -108,6 +108,16 @@ function openCustomerModal(customer = null, onSave) {
     e.preventDefault();
     const data = sanitizeStrings(Object.fromEntries(new FormData(form).entries()));
     ["priceHour", "vat", "irpf"].forEach(f => data[f] = parseFloat(data[f] || 0));
+
+    const monthlyFallback = customer?.minimumMonthlyHours ?? 0;
+    let monthly = data.minimumMonthlyHours ?? monthlyFallback;
+    monthly = parseInt(monthly, 10);
+    data.minimumMonthlyHours = Number.isNaN(monthly) ? monthlyFallback : monthly;
+
+    const dailyFallback = customer?.minimumDailyHours ?? 0;
+    let daily = data.minimumDailyHours ?? dailyFallback;
+    daily = parseFloat(daily);
+    data.minimumDailyHours = Number.isNaN(daily) ? dailyFallback : daily;
     try {
       if (customer) {
         await db.update('customers', { no: customer.no }, data);
